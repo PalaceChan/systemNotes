@@ -1,0 +1,119 @@
+* create iso image
+easiest is to use ~dd~ on a thumb drive like this:
+#+BEGIN_SRC bash
+dd bs=4M if=/path/to/arch.iso of=/dev/sdx oflag=sync
+#+END_SRC
+to make the thumb drive usable again after that one must repartition like this:
+#+BEGIN_SRC bash
+sudo wipefs --all /dev/sdx
+sudo fdisk /dev/sdx #followed by g, n, <RET> to make single partition and w to commit
+sudo mkfs.ext4 /dev/sdx1 #to put a fresh file system into the partition made above
+#+END_SRC
+* boot into image, get internet, set time, partition
+need to verify in UEFI mode by checking for presence of ~file /sys/firmware/efi/efivars~
+next internet run ~wifi-menu~ and check with ~ip a~ or ~ping -c 2 www.google.com~
+if that is fine next steps are a quick time set
+#+BEGIN_SRC bash
+timedatectl status #to check
+timedatectl set-ntp true
+#+END_SRC
+next
+#+BEGIN_SRC bash
+pacman -Syyy #sync latest
+fdisk /dev/sdx #your disk - type g for a new GPT partition table
+#+END_SRC
+make an EFI partition about 500MB, a boot about 500MB and last partition fill it up and type ~t~
+to pick type 31 (LVM) for it then finalize
+then first two filesystems:
+#+BEGIN_SRC bash
+mkfs.fat -F32 /dev/sdx1 #EFI
+mkfs.ext4 /dev/sdx2 #Boot
+#+END_SRC
+for the last one try ~modprobe dm_mod~ to see =/dev/mapper= if not just make the volumes with /dev/sdx3 directly like
+#+BEGIN_SRC bash
+pvcreate --dataalignment 1m /dev/mapper/lvm #or /dev/sdx3
+vgcreate vg0 /dev/mapper/lvm #or /dev/sdx3
+lvcreate -L 30GB vg0 -n lv_root
+lvcreate -L 500GB vg0 -n lv_home
+modprobe dm_mod
+vgscan
+vgchange -ay
+#+END_SRC
+next make file systems and mount everything:
+#+BEGIN_SRC bash
+mkfs.ext4 /dev/vg0/lv_root
+mkfs.ext4 /dev/vg0/lv_home
+mount /dev/vg0/lv_root /mnt
+mkdir /mnt/boot /mnt/home /mnt/etc
+mount /dev/sdx2 /mnt/boot
+mount /dev/vg0/lv_home /mnt/home
+#+END_SRC
+with everything mounted make the =fstab= file and strap on:
+#+BEGIN_SRC bash
+genfstab -U -p /mnt >> /mnt/etc/fstab
+pacstrap -i /mnt base
+arch-chroot /mnt
+#+END_SRC
+* initial setup now in your ssd
+first set the timezone and hwclock
+#+BEGIN_SRC bash
+ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+hwclock --systohc
+#+END_SRC
+name your host by editing or creating =/etc/hostname= with name
+and then editing =/etc/hosts= to contain
+#+BEGIN_EXAMPLE
+127.0.0.1 localhost
+::1       localhost
+127.0.1.1 yourhostname.localdomain yourhostname
+#+END_EXAMPLE
+some packages to install
+#+BEGIN_SRC bash
+pacman -S base-devel grub efibootmgr dosfstools mtools linux-headers networkmanager wpa_supplicant wireless_tools emacs
+systemctl enable NetworkManager
+#+END_SRC
+now edit ~/etc/mkinitcpio.conf~ and in =HOOKS= between =block= and =filesystems= add =lvm2= entry
+and then one can run
+#+BEGIN_SRC bash
+mkinitcpio -p linux
+#+END_SRC
+generate locale by uncommenting =en_US.UTF-8= in =/etc/locale.gen= and running ~locale-gen~
+set the root passwd ~passwd~ add your user ~useradd -m -g users -G wheel bla~ and ~passwd bla~
+if sudo not installed, install it (can check with ~pacman -Q sudo~) and allow wheel group by running
+~EDITOR='emacs -nw' visudo~ and uncommenting =%wheel ALL=(ALL) ALL=
+next ready grub like so
+#+BEGIN_SRC bash
+grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo #might have to mkdir the destination
+grub-mkconfig -o /boot/grub/grub.cfg
+#+END_SRC
+finally make a swapfile and add it to fstab like so
+#+BEGIN_SRC bash
+fallocate -l 8G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+cp /etc/fstab /etc/fstab.bak
+echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+#+END_SRC
+ready to go at this point so ~exit; umount -R /mnt; reboot~
+* upon boot
+verify everything works then recommend ~reboot~ and in grub menu type =e= to edit the kernel params
+and add ~mitigations=off~ to avoid having poor performance for stupid reasons. after booting 
+check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/default/grub~ adding it to 
+the =GRUB_CMDLINE_LINUX_DEFAULT= line.
+next install quite a few more useful packages
+#+BEGIN_SRC bash
+sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit i3-gaps rxvt-unicode dmenu
+sudo pacman -S ttf-inconsolata tree #ripgrep parallel
+#+END_SRC
+get sensors to be able to monitor system
+#+BEGIN_SRC bash
+sudo pacman -S lm_sensors
+sudo sensors-detect
+#+END_SRC
+install nvidia requirements and reboot/upgrade system until able to detect card
+#+BEGIN_SRC bash
+sudo pacman -S nvidia nvidia-utils nvidia-settings
+sudo nvidia-xconfig #once installed
+sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
+#+END_SRC
