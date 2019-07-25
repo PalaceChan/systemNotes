@@ -104,7 +104,7 @@ the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
 sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit i3-gaps rxvt-unicode dmenu
-sudo pacman -S ttf-inconsolata tree #ripgrep parallel
+sudo pacman -S ttf-inconsolata tree ripgrep parallel
 #+END_SRC
 get sensors to be able to monitor system
 #+BEGIN_SRC bash
