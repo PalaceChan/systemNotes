@@ -103,7 +103,7 @@ check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/defau
 the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
-sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit i3-gaps rxvt-unicode dmenu
+sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop i3-gaps rxvt-unicode dmenu
 sudo pacman -S ttf-inconsolata tree ripgrep parallel
 #+END_SRC
 get sensors to be able to monitor system
@@ -117,3 +117,16 @@ sudo pacman -S nvidia nvidia-utils nvidia-settings
 sudo nvidia-xconfig #once installed
 sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
 #+END_SRC
+use sudo ~nvidia-settings~ for future monitor additions and updates to displays
+* lvm snapshots
+use a command like this to backup root filesystem regularly
+#+BEGIN_SRC bash
+sudo lvcreate -L 8GB -s -n root_snapshot_YYYYMMDD /dev/mapper/vg0-lv_root
+sudo lvs #display existing
+#+END_SRC
+to purge an old snapshot
+#+BEGIN_SRC bash
+sudo lvremove /dev/vg0/root_snapshot_YYYYMMDD
+#+END_SRC
+* multiple monitors
+use ~xprop~ command (package =xorg-xprop=) to click on windows and see their class names
