@@ -1,0 +1,2 @@
+* mbsync
+This required an app specific password from gmail settings as mbsync does not support 2-step auth
