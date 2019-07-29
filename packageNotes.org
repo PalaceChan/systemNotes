@@ -1,2 +1,5 @@
 * mbsync
-This required an app specific password from gmail settings as mbsync does not support 2-step auth
+** This required an app specific password from gmail settings as mbsync does not support 2-step auth
+** On a first time sync use Timeout 0 to get through
+* mu
+** First run (assuming mbsync dir from above) do ~time mu index --maildir=~/mbsync~

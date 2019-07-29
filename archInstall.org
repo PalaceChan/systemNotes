@@ -118,6 +118,7 @@ sudo nvidia-xconfig #once installed
 sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
 #+END_SRC
 use sudo ~nvidia-settings~ for future monitor additions and updates to displays
+edit =/etc/makepkg.conf= (in particular MAKEFLAGS -j) to match server capacity
 * lvm snapshots
 use a command like this to backup root filesystem regularly
 #+BEGIN_SRC bash
@@ -132,9 +133,9 @@ sudo lvremove /dev/vg0/root_snapshot_YYYYMMDD
 use ~xprop~ command (package =xorg-xprop=) to click on windows and see their class names
 * miscellaneous packages
 Useful packages to have on any system
-|---------+------------------------------------------+----------------------|
-| Package | Notes                                    | Command              |
-|---------+------------------------------------------+----------------------|
-| isync   | yields mbsync used by mu4e to pull email | sudo pacman -S isync |
-|         |                                          |                      |
+|---------+------------------------------------------+---------------------------------------------------------------|
+| Package | Notes                                    | Command                                                       |
+|---------+------------------------------------------+---------------------------------------------------------------|
+| isync   | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                        |
+| mu-git  | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~mkpkg -si~ |
 
