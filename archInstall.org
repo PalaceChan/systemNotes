@@ -129,13 +129,16 @@ to purge an old snapshot
 #+BEGIN_SRC bash
 sudo lvremove /dev/vg0/root_snapshot_YYYYMMDD
 #+END_SRC
+you can check volume group stats (like free space) with ~sudo vgs~
 * multiple monitors
 use ~xprop~ command (package =xorg-xprop=) to click on windows and see their class names
 * miscellaneous packages
 Useful packages to have on any system
-|---------+------------------------------------------+---------------------------------------------------------------|
-| Package | Notes                                    | Command                                                       |
-|---------+------------------------------------------+---------------------------------------------------------------|
-| isync   | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                        |
-| mu-git  | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~mkpkg -si~ |
+|------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
+| Package    | Notes                                    | Command                                                                                         |
+|------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
+| isync      | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                          |
+| mu-git     | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~mkpkg -si~                                   |
+| virtualbox | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
+|            |                                          |                                                                                                 |
 
