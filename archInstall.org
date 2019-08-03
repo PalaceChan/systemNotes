@@ -104,7 +104,7 @@ the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
 sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop i3-gaps rxvt-unicode dmenu
-sudo pacman -S ttf-inconsolata tree ripgrep parallel
+sudo pacman -S ttf-inconsolata tree ripgrep parallel alsa-utils
 #+END_SRC
 get sensors to be able to monitor system
 #+BEGIN_SRC bash
@@ -131,14 +131,16 @@ sudo lvremove /dev/vg0/root_snapshot_YYYYMMDD
 #+END_SRC
 you can check volume group stats (like free space) with ~sudo vgs~
 * multiple monitors
-use ~xprop~ command (package =xorg-xprop=) to click on windows and see their class names
+use ~xprop | grep CLASS~ command (package =xorg-xprop=) to click on windows and see their class names
+* audio
+run ~alsamixer~ to ensure channels are unmuted, run ~speaker-test~ to test
 * miscellaneous packages
 Useful packages to have on any system
-|------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
-| Package    | Notes                                    | Command                                                                                         |
-|------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
-| isync      | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                          |
-| mu-git     | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~mkpkg -si~                                   |
-| virtualbox | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
-|            |                                          |                                                                                                 |
+|------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
+| Package          | Notes                                    | Command                                                                                         |
+|------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
+| isync            | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                          |
+| mu-git           | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~mkpkg -si~                                   |
+| virtualbox       | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
+| telegram-desktop |                                          | ~sudo pacman -S telegram-desktop~                                                               |
 
