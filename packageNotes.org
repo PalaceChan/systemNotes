@@ -1,13 +1,11 @@
 * mbsync
-** This required an app specific password from gmail settings as mbsync does not support 2-step auth
-** On a first time sync use Timeout 0 to get through
+This required an app specific password from gmail settings as mbsync does not support 2-step auth.
+On a first time sync use Timeout 0 to get through.
 * mu
-** First run (assuming mbsync dir from above) do ~time mu index --maildir=~/mbsync~
+First run (assuming mbsync dir from above) do ~time mu index --maildir=~/mbsync~
 * virtualbox
-** ~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers
-** the oracle extensions came from the usual AUR ~makepkg -si~
-got ISO from here: https://www.microsoft.com/en-in/software-download/windows10ISO
-can give it 4GB ram and 50GB dynamic hard disk (default type) and should just work after going through installer
+~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers.
+the oracle extensions came from the usual AUR ~makepkg -si~
 * telega
 to get telegram in emacs, first tdlib which is in AUR
 #+BEGIN_SRC bash
