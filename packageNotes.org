@@ -8,3 +8,16 @@
 ** the oracle extensions came from the usual AUR ~makepkg -si~
 got ISO from here: https://www.microsoft.com/en-in/software-download/windows10ISO
 can give it 4GB ram and 50GB dynamic hard disk (default type) and should just work after going through installer
+* telega
+to get telegram in emacs, first tdlib which is in AUR
+#+BEGIN_SRC bash
+git clone https://aur.archlinux.org/telegram-tdlib.git .
+makepkg -si
+#+END_SRC
+then had to get from github the actual telegram package and build the server
+#+BEGIN_SRC bash
+git clone https://github.com/zevlg/telega.el .
+make && make install && make test
+#+END_SRC
+if it fails the =test= make sure you have visual-fill-column package from MELPA
+then just ~M-x telega~
