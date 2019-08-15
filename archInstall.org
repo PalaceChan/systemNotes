@@ -144,4 +144,7 @@ Useful packages to have on any system
 | virtualbox       | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
 | telegram-desktop |                                          | ~sudo pacman -S telegram-desktop~                                                               |
 | telega           | emacs equivalent (see packageNotes.org)  | AUR for tdlib, git from src for the rest (incuding a C server)                                  |
+| mlocate          | for updatedb to do custom helm locates   | ~sudo pacman -S mlocate~                                                                        |
+| ctags            | to generate TAGS                         | ~sudo pacman -S ctags~                                                                          |
+
 
