@@ -146,5 +146,7 @@ Useful packages to have on any system
 | telega           | emacs equivalent (see packageNotes.org)  | AUR for tdlib, git from src for the rest (incuding a C server)                                  |
 | mlocate          | for updatedb to do custom helm locates   | ~sudo pacman -S mlocate~                                                                        |
 | ctags            | to generate TAGS                         | ~sudo pacman -S ctags~                                                                          |
+| clang            | llvm frontend                            | ~sudo pacman -S clang~                                                                          |
+|                  |                                          |                                                                                                 |
 
 
