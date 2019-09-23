@@ -147,6 +147,6 @@ Useful packages to have on any system
 | mlocate          | for updatedb to do custom helm locates   | ~sudo pacman -S mlocate~                                                                        |
 | ctags            | to generate TAGS                         | ~sudo pacman -S ctags~                                                                          |
 | clang            | llvm frontend                            | ~sudo pacman -S clang~                                                                          |
-|                  |                                          |                                                                                                 |
+| llvm             | llvm libs                                | ~sudo pacman -S llvm~                                                                           |
 
 
