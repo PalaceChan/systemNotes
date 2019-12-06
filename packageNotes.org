@@ -21,3 +21,5 @@ make && make install && make test
 #+END_SRC
 if it fails the =test= make sure you have visual-fill-column package from MELPA
 then just ~M-x telega~
+* stdman
+works better with ~M-x man~ than with helm which completes to full template scope and doesnt find it
