@@ -151,7 +151,8 @@ Useful packages to have on any system
 | lsof             |                                          | ~sudo pacman -S lsof~                                                                           |
 | strace           |                                          | ~sudo pacman -S strace~                                                                         |
 | stdman           | c++11/14 man pages                       | ~git clone https://aur.archlinux.org/stdman-git.git~  then ~makepkg -si~                          |
-
+* lifetime notes
+If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 
 
 
