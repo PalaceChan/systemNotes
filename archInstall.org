@@ -140,7 +140,7 @@ Useful packages to have on any system
 | Package          | Notes                                    | Command                                                                                         |
 |------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
 | isync            | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                          |
-| mu-git           | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~makepkg -si~                                   |
+| mu-git           | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~makepkg -si~                                 |
 | virtualbox       | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
 | telegram-desktop |                                          | ~sudo pacman -S telegram-desktop~                                                               |
 | telega           | emacs equivalent (see packageNotes.org)  | AUR for tdlib, git from src for the rest (incuding a C server)                                  |
@@ -150,7 +150,9 @@ Useful packages to have on any system
 | llvm             | llvm libs                                | ~sudo pacman -S llvm~                                                                           |
 | lsof             |                                          | ~sudo pacman -S lsof~                                                                           |
 | strace           |                                          | ~sudo pacman -S strace~                                                                         |
-| stdman           | c++11/14 man pages                       | ~git clone https://aur.archlinux.org/stdman-git.git~  then ~makepkg -si~                          |
+| stdman           | c++11/14 man pages                       | ~git clone https://aur.archlinux.org/stdman-git.git~  then ~makepkg -si~                        |
+| python-black     | /usr/bin/black                           | ~sudo pacman -S python-black~                                                                   |
+| jupyterlab       | for elpy use of course                   | ~sudo pacman -S jupyterlab~                                                                     |
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 

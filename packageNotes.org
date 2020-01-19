@@ -23,3 +23,10 @@ if it fails the =test= make sure you have visual-fill-column package from MELPA
 then just ~M-x telega~
 * stdman
 works better with ~M-x man~ than with helm which completes to full template scope and doesnt find it
+* jupyterlab
+If you get the error: from IPython.utils.py3compat import cast_unicode_py2, input
+follow instructions here: https://stackoverflow.com/questions/59631663/jupyter-console-fails-to-start-but-jupyter-notebook-is-fine
+namely change line 22 of ptshell.py like this until master branch gets fixed:
+
+#from IPython.utils.py3compat import cast_unicode_py2, input
+from ipython_genutils.py3compat import cast_unicode_py2, input
