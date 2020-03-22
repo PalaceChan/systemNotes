@@ -30,3 +30,6 @@ namely change line 22 of ptshell.py like this until master branch gets fixed:
 
 #from IPython.utils.py3compat import cast_unicode_py2, input
 from ipython_genutils.py3compat import cast_unicode_py2, input
+* ib-tws
+~git clone https://aur.archlinux.org/ib-tws.git~
+and just ~makepkg -si~ worked off the bat
