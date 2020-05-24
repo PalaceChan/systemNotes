@@ -7,7 +7,9 @@ First run (assuming mbsync dir from above) do ~time mu index --maildir=~/mbsync~
 ~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers.
 the oracle extensions came from the usual AUR ~makepkg -si~
 resolution was initially crap but with virtualbox closed one can fix by running ~VBoxManage setextradata "win10" CustomVideoMode1 2560x1440x32~
-(and check it took effect with ~VBoxManage getextradata "win10" enumerate~
+(and check it took effect with ~VBoxManage getextradata "win10" enumerate~)
+to upgrade just pull in the AUR repo and check this thread: https://aur.archlinux.org/packages/virtualbox-ext-oracle/
+(I did have to ~makepkg -cfi~ twice on 20200322 for 6.1.4 to work)
 * telega
 to get telegram in emacs, first tdlib which is in AUR
 #+BEGIN_SRC bash
