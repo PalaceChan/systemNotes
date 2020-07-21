@@ -35,3 +35,6 @@ from ipython_genutils.py3compat import cast_unicode_py2, input
 * ib-tws
 ~git clone https://aur.archlinux.org/ib-tws.git~
 and just ~makepkg -si~ worked off the bat
+* clojure
+~clojure~ (pulls jre so source /etc/profile) and ~leinigen~ 
+[[https://wiki.archlinux.org/index.php/Clojure][wiki]]
