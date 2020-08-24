@@ -155,6 +155,8 @@ Useful packages to have on any system
 | jupyterlab       | for elpy use of course                   | ~sudo pacman -S jupyterlab~                                                                     |
 | perf             | perf events                              | ~sudo pacman -S perf~                                                                           |
 | peek             | gif recorder                             | ~sudo pacman -S peek~                                                                           |
+| ghostscript      | pdf manip                                | ~sudo pacman -S ghostscript~                                                                    |
+| pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                          |
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 
