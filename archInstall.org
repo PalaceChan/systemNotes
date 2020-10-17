@@ -157,6 +157,7 @@ Useful packages to have on any system
 | peek             | gif recorder                             | ~sudo pacman -S peek~                                                                           |
 | ghostscript      | pdf manip                                | ~sudo pacman -S ghostscript~                                                                    |
 | pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                          |
+| libvterm         | for vterm in emacs                       | ~sudo pacman -S libvterm~                                                                       |
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 
