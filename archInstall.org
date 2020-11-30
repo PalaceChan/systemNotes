@@ -103,7 +103,7 @@ check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/defau
 the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
-sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop i3-gaps rxvt-unicode dmenu
+sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop rxvt-unicode dmenu
 sudo pacman -S ttf-inconsolata tree ripgrep the_silver_searcher parallel alsa-utils wget
 #+END_SRC
 get sensors to be able to monitor system
@@ -119,6 +119,11 @@ sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
 #+END_SRC
 use sudo ~nvidia-settings~ for future monitor additions and updates to displays
 edit =/etc/makepkg.conf= (in particular MAKEFLAGS -j) to match server capacity
+* openbox
+#+BEGIN_SRC bash
+sudo pacman -S openbox obconf
+#+END_SRC
+then add exec openbox-session to bottom of xinitrc
 * lvm snapshots
 use a command like this to backup root filesystem regularly
 #+BEGIN_SRC bash
