@@ -1,3 +1,16 @@
 * Misc
 system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+* Compiling native comp from source
+** First download the code (could git clone or src tarball from https://git.savannah.gnu.org/cgit/emacs.git/?h=feature/native-comp)
+** in that directory run autogen.sh 
+** Then run a command like this:
+#+begin_src bash
+./configure PKG_CONFIG_PATH='/path/to/individual/pkgconfig:/path/to/another/pkgconfig' CPPFLAGS='-I/path/to/pkg/include' LDFLAGS='-O3 -L/path/to/package/lib' CFLAGS='-O3 -march=native' --prefix /path/to/install_dir --with-gif=ifavailable --with-tiff=ifavailable --with-gnutls=yes --with-json=yes --with-nativecomp=yes --with-mailutils --with-dbus=yes --with-x-toolkit=lucid
+#+end_src
+followed by ==make -j8== and ==make install== 
+** Then commands like these can be helpful to force native compilation and regular byte compilation of stuff
+#+begin_src emacs-lisp
+byte-recompile-directory
+native-compile-async
+#+end_src
