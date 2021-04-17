@@ -169,6 +169,13 @@ Useful packages to have on any system
 | texlive-most     | covers needs for tex                     | ~sudo pacman -S texlive-most~                                                                   |
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
+* updating packages
+steps are:
+- use a command like ~sudo pacman -Syuw --ignore=ttf-inconsolata~ to synchronize and download
+- use ~sudo lvcreate -L18GB -s -n root_snapshot_20210317 /dev/mapper/vg0-lv_root~ to save state
+- use ~sudo pacman -Su --ignore=ttf-inconsolata~ to upgrade
+- reboot
+- use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
 
 
 
