@@ -167,6 +167,16 @@ Useful packages to have on any system
 | pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                          |
 | libvterm         | for vterm in emacs                       | ~sudo pacman -S libvterm~                                                                       |
 | texlive-most     | covers needs for tex                     | ~sudo pacman -S texlive-most~                                                                   |
+* external drive backups
+first time only need to make a partition on the external drive and then an ext4 fs.
+for the partition just do ~sudo fdisk~ on the device (e.g. /dev/sda) and ~g~ for GPT label
+then ~n~ for new partition (all defaults fine to use the whole thing) then ~w~ to save that
+
+then e.g. ~sudo mkfs.ext4 /dev/sda1~ to get the fs done and then just ~sudo mount -t ext4 /dev/sda1 /mnt~
+and it useable
+
+for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (it can auto mount external drive above)
+
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 * updating packages
