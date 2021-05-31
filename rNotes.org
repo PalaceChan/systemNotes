@@ -1,0 +1,11 @@
+* on new install
+rename (or dont sync at first) the .Rprofile to allow for package installation
+
+run R and check =Sys.getenv("R_LIBS_USER")= then =mkdir -p= that directory
+restart R and =.libPaths()= should reflect it
+
+now can start to install packages by running
+
+#+begin_src R
+  install.packages(c("lazyeval","abind","data.table","scales","digest","bit","bit64","hash","lubridate","nanotime","ggplot2","magrittr","purrr"))
+#+end_src
