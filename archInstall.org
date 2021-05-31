@@ -103,11 +103,15 @@ check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/defau
 the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
-sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop rxvt-unicode dmenu
-sudo pacman -S ttf-inconsolata tree ripgrep the_silver_searcher parallel alsa-utils wget
-sudo pacman -S firefox pulseaudio xorg-xrandr xorg-wininfo xorg-xprop xorg-xdpyinfo xdpyinfo
-sudo pacman -S pavucontrol bc gdb htop paccache pacman-contrib
+  sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop xorg-xset rxvt-unicode dmenu
+  sudo pacman -S ttf-inconsolata tree ripgrep the_silver_searcher parallel alsa-utils wget
+  sudo pacman -S firefox pulseaudio xorg-xrandr xorg-wininfo xorg-xprop xorg-xdpyinfo xdpyinfo
+  sudo pacman -S pavucontrol bc gdb htop paccache pacman-contrib
+
+  sudo pacman -S base-devel inetutils cmake
 #+END_SRC
+if old laptop also grab =linux-firmware=
+
 get sensors to be able to monitor system
 #+BEGIN_SRC bash
 sudo pacman -S lm_sensors
