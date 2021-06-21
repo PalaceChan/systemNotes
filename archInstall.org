@@ -1,3 +1,5 @@
+* reference guides on youtube
+https://www.youtube.com/watch?v=DPLnBPM4DhI "Arch Linux: Full Installation Guide - A complete tutorial/walthrough in one video!"
 * create iso image
 easiest is to use ~dd~ on a thumb drive like this:
 #+BEGIN_SRC bash
