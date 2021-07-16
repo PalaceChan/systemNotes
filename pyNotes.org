@@ -1,0 +1,6 @@
+* on new install
+use this to install some basics
+
+#+begin_src bash
+pip3 install --user pandas
+#+end_src

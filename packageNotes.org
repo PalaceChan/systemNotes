@@ -1,15 +1,26 @@
+* clojure
+~clojure~ (pulls jre so source /etc/profile) and ~leinigen~ 
+[[https://wiki.archlinux.org/index.php/Clojure][wiki]]
+* emacs-eaf
+~git clone https://aur.archlinux.org/emacs-eaf.git~
+~sudo pacman -S aria2 wmctrl~
+* ib-tws
+~git clone https://aur.archlinux.org/ib-tws.git~
+and just ~makepkg -si~ worked off the bat
+* jupyterlab
+If you get the error: from IPython.utils.py3compat import cast_unicode_py2, input
+follow instructions here: https://stackoverflow.com/questions/59631663/jupyter-console-fails-to-start-but-jupyter-notebook-is-fine
+namely change line 22 of ptshell.py like this until master branch gets fixed:
+
+#from IPython.utils.py3compat import cast_unicode_py2, input
+from ipython_genutils.py3compat import cast_unicode_py2, input
 * mbsync
 This required an app specific password from gmail settings as mbsync does not support 2-step auth.
 On a first time sync use Timeout 0 to get through.
 * mu
 First run (assuming mbsync dir from above) do ~time mu index --maildir=~/mbsync~
-* virtualbox
-~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers.
-the oracle extensions came from the usual AUR ~makepkg -si~
-resolution was initially crap but with virtualbox closed one can fix by running ~VBoxManage setextradata "win10" CustomVideoMode1 2560x1440x32~
-(and check it took effect with ~VBoxManage getextradata "win10" enumerate~)
-to upgrade just pull in the AUR repo and check this thread: https://aur.archlinux.org/packages/virtualbox-ext-oracle/
-(I did have to ~makepkg -cfi~ twice on 20200322 for 6.1.4 to work)
+* stdman
+works better with ~M-x man~ than with helm which completes to full template scope and doesnt find it
 * telega
 to get telegram in emacs, first tdlib which is in AUR
 #+BEGIN_SRC bash
@@ -23,21 +34,16 @@ make && make install && make test
 #+END_SRC
 if it fails the =test= make sure you have visual-fill-column package from MELPA
 then just ~M-x telega~
-* stdman
-works better with ~M-x man~ than with helm which completes to full template scope and doesnt find it
-* jupyterlab
-If you get the error: from IPython.utils.py3compat import cast_unicode_py2, input
-follow instructions here: https://stackoverflow.com/questions/59631663/jupyter-console-fails-to-start-but-jupyter-notebook-is-fine
-namely change line 22 of ptshell.py like this until master branch gets fixed:
+* tor
+https://aur.archlinux.org/packages/tor-browser/
 
-#from IPython.utils.py3compat import cast_unicode_py2, input
-from ipython_genutils.py3compat import cast_unicode_py2, input
-* ib-tws
-~git clone https://aur.archlinux.org/ib-tws.git~
-and just ~makepkg -si~ worked off the bat
-* clojure
-~clojure~ (pulls jre so source /etc/profile) and ~leinigen~ 
-[[https://wiki.archlinux.org/index.php/Clojure][wiki]]
-* emacs-eaf
-~git clone https://aur.archlinux.org/emacs-eaf.git~
-~sudo pacman -S aria2 wmctrl~
+first run ~gpg --auto-key-locate nodefault,wkd --locate-keys torbrowser@torproject.org~
+then ~makepkg -si~, and check by visiting https://check.torproject.org/ 
+
+* virtualbox
+~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers.
+the oracle extensions came from the usual AUR ~makepkg -si~
+resolution was initially crap but with virtualbox closed one can fix by running ~VBoxManage setextradata "win10" CustomVideoMode1 2560x1440x32~
+(and check it took effect with ~VBoxManage getextradata "win10" enumerate~)
+to upgrade just pull in the AUR repo and check this thread: https://aur.archlinux.org/packages/virtualbox-ext-oracle/
+(I did have to ~makepkg -cfi~ twice on 20200322 for 6.1.4 to work)

@@ -110,7 +110,7 @@ next install quite a few more useful packages
   sudo pacman -S firefox pulseaudio xorg-xrandr xorg-wininfo xorg-xprop xorg-xdpyinfo xdpyinfo
   sudo pacman -S pavucontrol bc gdb htop paccache pacman-contrib
 
-  sudo pacman -S base-devel inetutils cmake tk #inetutils for hostname and tk for R menu
+  sudo pacman -S base-devel inetutils cmake tk man #inetutils for hostname and tk for R menu
 #+END_SRC
 if old laptop also grab =linux-firmware=
 
@@ -147,6 +147,7 @@ you can check volume group stats (like free space) with ~sudo vgs~
 use ~xprop | grep CLASS~ command (package =xorg-xprop=) to click on windows and see their class names
 * audio
 run ~alsamixer~ to ensure channels are unmuted, run ~speaker-test~ to test
+if there is annoying beep, alsamixer might have a beep channel, mute it with =M=
 * miscellaneous packages
 Useful packages to have on any system
 |------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
