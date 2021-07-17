@@ -100,13 +100,13 @@ echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
 ready to go at this point so ~exit; umount -R /mnt; reboot~
 * upon boot
 verify everything works then recommend ~reboot~ and in grub menu type =e= to edit the kernel params
-and add ~mitigations=off~ to avoid having poor performance for stupid reasons. after booting 
-check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/default/grub~ adding it to 
+and add ~mitigations=off~ to avoid having poor performance for stupid reasons. after booting
+check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/default/grub~ adding it to
 the =GRUB_CMDLINE_LINUX_DEFAULT= line.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
   sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop xorg-xset rxvt-unicode dmenu
-  sudo pacman -S ttf-inconsolata tree ripgrep the_silver_searcher parallel alsa-utils wget
+  sudo pacman -S tree ripgrep the_silver_searcher parallel alsa-utils wget
   sudo pacman -S firefox pulseaudio xorg-xrandr xorg-wininfo xorg-xprop xorg-xdpyinfo xdpyinfo
   sudo pacman -S pavucontrol bc gdb htop paccache pacman-contrib
 
@@ -188,11 +188,8 @@ for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 * updating packages
 steps are:
-- use a command like ~sudo pacman -Syuw --ignore=ttf-inconsolata~ to synchronize and download
+- use a command like ~sudo pacman -Syuw~ to synchronize and download
 - use ~sudo lvcreate -L18GB -s -n root_snapshot_20210317 /dev/mapper/vg0-lv_root~ to save state
-- use ~sudo pacman -Su --ignore=ttf-inconsolata~ to upgrade
+- use ~sudo pacman -Su~ to upgrade
 - reboot
 - use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
-
-
-
