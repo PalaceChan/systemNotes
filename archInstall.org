@@ -127,6 +127,13 @@ sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
 #+END_SRC
 use sudo ~nvidia-settings~ for future monitor additions and updates to displays
 edit =/etc/makepkg.conf= (in particular MAKEFLAGS -j) to match server capacity
+
+set up a global gitignore (and github auth)
+#+begin_src bash
+  git config --global core.excludesFile ~/.gitignore
+  git config --global --add github.user <user>
+  git config --global --add github.oauth-token <token>
+#+end_src
 * openbox
 #+BEGIN_SRC bash
 sudo pacman -S openbox obconf
