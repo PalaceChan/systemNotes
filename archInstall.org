@@ -171,9 +171,10 @@ Useful packages to have on any system
 | llvm             | llvm libs                                | ~sudo pacman -S llvm~                                                                           |
 | lsof             |                                          | ~sudo pacman -S lsof~                                                                           |
 | strace           |                                          | ~sudo pacman -S strace~                                                                         |
+| valgrind         |                                          | ~sudo pacman -S valgrind~                                                                       |
 | stdman           | c++11/14 man pages                       | ~git clone https://aur.archlinux.org/stdman-git.git~  then ~makepkg -si~                        |
 | python-black     | /usr/bin/black                           | ~sudo pacman -S python-black~                                                                   |
-| python-pip       |                                          | ~sudo pacman -S python-pip~                                                                |
+| python-pip       |                                          | ~sudo pacman -S python-pip~                                                                     |
 | jupyterlab       | for elpy use of course                   | ~sudo pacman -S jupyterlab~                                                                     |
 | perf             | perf events                              | ~sudo pacman -S perf~                                                                           |
 | peek             | gif recorder                             | ~sudo pacman -S peek~                                                                           |

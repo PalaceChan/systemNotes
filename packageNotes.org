@@ -1,5 +1,5 @@
 * clojure
-~clojure~ (pulls jre so source /etc/profile) and ~leinigen~ 
+~clojure~ (pulls jre so source /etc/profile) and ~leinigen~
 [[https://wiki.archlinux.org/index.php/Clojure][wiki]]
 * emacs-eaf
 ~git clone https://aur.archlinux.org/emacs-eaf.git~
@@ -38,7 +38,7 @@ then just ~M-x telega~
 https://aur.archlinux.org/packages/tor-browser/
 
 first run ~gpg --auto-key-locate nodefault,wkd --locate-keys torbrowser@torproject.org~
-then ~makepkg -si~, and check by visiting https://check.torproject.org/ 
+then ~makepkg -si~, and check by visiting https://check.torproject.org/
 
 * virtualbox
 ~sudo modprobe vboxdrv~ was failing the first time so had to ~sudo pacman -Syu~ to have latest headers.
@@ -47,3 +47,6 @@ resolution was initially crap but with virtualbox closed one can fix by running 
 (and check it took effect with ~VBoxManage getextradata "win10" enumerate~)
 to upgrade just pull in the AUR repo and check this thread: https://aur.archlinux.org/packages/virtualbox-ext-oracle/
 (I did have to ~makepkg -cfi~ twice on 20200322 for 6.1.4 to work)
+
+second time only had to get virtualbox, then the AUR clone, reboot, (enable virtualization in bios if error)
+then also ~sudo pacman -S virtualbox-guest-iso~ to add the guest additions from within the guest machine
