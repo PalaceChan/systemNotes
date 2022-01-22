@@ -195,6 +195,8 @@ for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 * updating packages
+if invalid or corrupted packages upgrade keyring with ~sudo pacman -S archlinux-keyring~
+
 steps are:
 - use a command like ~sudo pacman -Syuw~ to synchronize and download
 - use ~sudo lvcreate -L18GB -s -n root_snapshot_20210317 /dev/mapper/vg0-lv_root~ to save state
