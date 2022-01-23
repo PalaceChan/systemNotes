@@ -194,8 +194,9 @@ for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (
 
 * lifetime notes
 If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
-* updating packages
+* updating arch
 if invalid or corrupted packages upgrade keyring with ~sudo pacman -S archlinux-keyring~
+if root partition full error clear cache all except most recent version with ~sudo paccache -rk1~ reference: https://ostechnix.com/recommended-way-clean-package-cache-arch-linux/
 
 steps are:
 - use a command like ~sudo pacman -Syuw~ to synchronize and download
