@@ -204,3 +204,8 @@ steps are:
 - use ~sudo pacman -Su~ to upgrade
 - reboot
 - use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
+* removing packages
+[[https://wiki.archlinux.org/title/pacman#Removing_packages][wiki]]
+
+look for them with ~pacman -Q | grep~ and remove with their deps not required by others with ~sudo pacman -Rs pkgname~
+(can also query for orphan/not-needed packages with ~pacman -Qdt~)
