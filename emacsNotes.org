@@ -25,7 +25,6 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/a13/emacs.d.git a13
   git clone https://github.com/IQSS/IQSS.emacs.git IQSS
   git clone https://github.com/IvanMalison/dotfiles.git IvanMalison
-  git clone https://github.com/ocodo/.emacs.d.git ocodo
   git clone https://github.com/incandescentman/Emacs-Settings.git incandescentman
   git clone https://github.com/joedicastro/dotfiles.git joedicastro
   git clone https://github.com/jwiegley/dot-emacs.git jwiegley
@@ -42,6 +41,8 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/xiongtx/.emacs.d.git xiongtx
   git clone https://github.com/tecosaur/emacs-config.git tecosaur
   git clone https://github.com/Wilfred/.emacs.d.git Wilfred
+  git clone https://github.com/daviwil/emacs-from-scratch.git daviwil
+  git clone https://github.com/jakebox/jake-emacs.git jakebox
 
-  for d in *; do pushd $d ; git pull --rebase --autostash; popd; done
+  for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
 #+end_src
