@@ -40,7 +40,6 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/rememberYou/.emacs.d.git rememberYou
   git clone https://github.com/xiongtx/.emacs.d.git xiongtx
   git clone https://github.com/tecosaur/emacs-config.git tecosaur
-  git clone https://github.com/Wilfred/.emacs.d.git Wilfred
   git clone https://github.com/daviwil/emacs-from-scratch.git daviwil
   git clone https://github.com/jakebox/jake-emacs.git jakebox
   git clone https://github.com/Eason0210/dot-emacs.git eason0210
