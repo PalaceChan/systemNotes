@@ -6,6 +6,11 @@ restart R and =.libPaths()= should reflect it
 
 now can start to install packages by running
 
+#+begin_src bash
+  sudo pacman -S tk # to avoid error on tcltk to show cran mirror selection
+#+end_src
+
 #+begin_src R
   install.packages(c("lazyeval","abind","data.table","scales","digest","bit","bit64","hash","lubridate","nanotime","ggplot2","magrittr","purrr"))
+  update.packages(lib.loc = "~/rlibs", oldPkgs = 'data.table')
 #+end_src
