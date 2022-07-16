@@ -44,6 +44,7 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/jakebox/jake-emacs.git jakebox
   git clone https://github.com/Eason0210/dot-emacs.git eason0210
   git clone https://github.com/DiamondBond/emacs.git diamondbond
+  git clone https://gitlab.com/skybert/my-little-friends.git skybert
 
   for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
 #+end_src
