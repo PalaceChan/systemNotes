@@ -89,6 +89,7 @@ grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo #might have to mkdir the destination
 grub-mkconfig -o /boot/grub/grub.cfg
 #+END_SRC
+(in unlikely case of not using uefi the grub-install command is likely ~grub-install --target=i386-pc --recheck /dev/sda~)
 finally make a swapfile and add it to fstab like so
 #+BEGIN_SRC bash
 dd if=/dev/zero of=/swapfile bs=1M count=8000 status=progress
@@ -204,6 +205,7 @@ go to https://archlinux.org/mirrorlist/ to get a new list and replace below (=/s
 * updating arch
 if invalid or corrupted packages upgrade keyring with ~sudo pacman -S archlinux-keyring~
 if root partition full error clear cache all except most recent version with ~sudo paccache -rk1~ reference: https://ostechnix.com/recommended-way-clean-package-cache-arch-linux/
+if a package conflicts and get asked to remove can check what deps on it via ~pacman -Qi pkggname~
 
 steps are:
 - use a command like ~sudo pacman -Syuw~ to synchronize and download
