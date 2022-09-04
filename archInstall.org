@@ -25,7 +25,7 @@ pacman -Syyy #sync latest
 fdisk /dev/sdx #your disk - type g for a new GPT partition table
 #+END_SRC
 make an EFI partition about 500MB, a boot about 500MB and last partition fill it up and type ~t~
-to pick type 31 (LVM) for it then finalize
+to pick type 31/43 (LVM) for it then finalize (check types with L)
 then first two filesystems:
 #+BEGIN_SRC bash
 mkfs.fat -F32 /dev/sdx1 #EFI
