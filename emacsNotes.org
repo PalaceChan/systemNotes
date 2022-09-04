@@ -1,6 +1,3 @@
-* misc
-system-configuration-options variable, arch one is:
-"--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
 * compiling native comp from source
 ** First download the code (could git clone or src tarball from https://git.savannah.gnu.org/cgit/emacs.git/?h=feature/native-comp)
 ** in that directory run autogen.sh
@@ -14,6 +11,8 @@ followed by ==make -j8== and ==make install==
 byte-recompile-directory
 native-compile-async
 #+end_src
+* dir-locals
+use =((nil . ((buffer-read-only . t))))= per this [[https://emacs.stackexchange.com/questions/38607/how-to-open-all-files-from-specific-path-as-read-only-buffer][stack exchange]] to open in read-only for reference sub-directories
 * emacs reference configs
 a compiled list: https://github.com/caisah/emacs.dz
 
@@ -48,3 +47,6 @@ a compiled list: https://github.com/caisah/emacs.dz
 
   for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
 #+end_src
+* misc
+system-configuration-options variable, arch one is:
+"--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
