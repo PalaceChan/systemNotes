@@ -43,9 +43,28 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/jakebox/jake-emacs.git jakebox
   git clone https://github.com/Eason0210/dot-emacs.git eason0210
   git clone https://github.com/DiamondBond/emacs.git diamondbond
+  git clone https://github.com/bbatsov/prelude.git prelude
   git clone https://gitlab.com/skybert/my-little-friends.git skybert
+  git clone https://github.com/redguardtoo/emacs.d.git redguardtoo
+  git clone https://github.com/xuchunyang/emacs.d.git xuchunyang
+  git clone https://github.com/DamienCassou/emacs.d.git DamienCassou
+  git clone https://github.com/dakra/dmacs.git dakra
+  git clone https://github.com/PythonNut/quark-emacs.git PythonNut
+  git clone https://github.com/jordonbiondo/.emacs.d.git jordonbiondo
+  git clone https://github.com/cute-jumper/.emacs.d.git cutejumper
+  git clone https://github.com/waymondo/hemacs.git waymondo
+  git clone https://github.com/novoid/dot-emacs.git novoid
+  git clone https://github.com/kaushalmodi/.emacs.d.git kaushalmodi
+  git clone https://github.com/expez/.emacs.d.git expez
+  git clone https://github.com/matthewbauer/bauer.git matthewbauer
+  git clone https://github.com/Fuco1/.emacs.d.git Fuco1
+  git clone https://github.com/alhassy/emacs.d.git alhassy
+  git clone https://github.com/nathantypanski/emacs.d.git nathantypanski
+  git clone https://github.com/abo-abo/oremacs.git aboabo
+  git clone https://github.com/kuanyui/.emacs.d.git kuanyui
 
   for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
+  for d in *; do cd $d; echo "UPDATES FOR $d"; git log --pretty=format:"%h%x09%an%x09%ad%x09%s" -5; cd -; done
 #+end_src
 * misc
 system-configuration-options variable, arch one is:
