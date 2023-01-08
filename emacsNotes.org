@@ -65,6 +65,8 @@ a compiled list: https://github.com/caisah/emacs.dz
   git clone https://github.com/karthink/.emacs.d.git karthink
   git clone https://github.com/HannesHaglund/my-emacs.git hannes
   git clone https://github.com/zoliky/dotemacs.git zoliky
+  git clone https://github.com/justinbarclay/.emacs.d.git justinbarclay
+  git clone https://github.com/fbkarsdorp/.emacs.d.git fbkarsdorp
 
   for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
   for d in *; do cd $d; echo "UPDATES FOR $d"; git log --pretty=format:"%h%x09%an%x09%ad%x09%s" -5; cd -; done
