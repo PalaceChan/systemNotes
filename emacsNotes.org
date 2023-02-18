@@ -79,3 +79,11 @@ a compiled list: https://github.com/caisah/emacs.dz
 * misc
 system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+* troubleshooting
+byte recompiling everything refs:
+https://emacs.stackexchange.com/questions/72655/after-updating-my-packages-two-packages-are-not-working-anymore-how-to-solve-t)
+https://stackoverflow.com/questions/24725778/how-to-rebuild-elpa-packages-after-upgrade-of-emacs
+
+#+begin_src emacs-lisp
+(byte-recompile-directory package-user-dir nil 'force)
+#+end_src
