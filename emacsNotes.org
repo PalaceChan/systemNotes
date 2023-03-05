@@ -11,6 +11,30 @@ followed by ==make -j8== and ==make install==
 byte-recompile-directory
 native-compile-async
 #+end_src
+* helm and marginalia
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
+#+end_src
+
+~debug-on-entry~ reveals ~helm-completing-read-default-1~ is getting called as a result of this bit:
+
+https://github.com/emacs-helm/helm/blob/431e34dcc9d38c10eb8b9f22c3b5a10a0bf250f7/helm-mode.el#L1139-L1148
+
+emacs style makes marginalia work for helpful but issue is that it is very slow
+
+#+begin_src emacs-lisp
+(setq helm-completion-style 'helm)
+(setq completion-styles '(basic partial-completion emacs22))
+
+;(setq helm-completion-style 'emacs)
+;(setq completion-styles '(flex))
+
+#+end_src
+
+for =M-x= and =find-file= not yet but in the case of =M-x= this seems variable is neat: ~helm-M-x-show-short-doc~ can toggle with ~C-]~
 * dir-locals
 use =((nil . ((buffer-read-only . t))))= per this [[https://emacs.stackexchange.com/questions/38607/how-to-open-all-files-from-specific-path-as-read-only-buffer][stack exchange]] to open in read-only for reference sub-directories
 * emacs reference configs
