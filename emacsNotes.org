@@ -96,6 +96,7 @@ git clone https://github.com/frap/emacs-literate.git frap
 git clone https://github.com/mxco86/emacs-config.git mxco86
 git clone https://github.com/legoscia/dotemacs.git legoscia
 git clone https://github.com/thierryvolpiatto/emacs-config.git thierryvolpiatto
+git clone https://github.com/mrvdb/emacs-config.git mrvdb
 git clone https://codeberg.org/vifon/emacs-config.git vifon
 
 for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
