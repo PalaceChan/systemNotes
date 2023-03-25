@@ -41,64 +41,65 @@ use =((nil . ((buffer-read-only . t))))= per this [[https://emacs.stackexchange.
 a compiled list: https://github.com/caisah/emacs.dz
 
 #+begin_src bash
-  git clone https://github.com/bnbeckwith/bnb-emacs.git bnbeckwith
-  git clone https://github.com/howardabrams/dot-files.git howardabrams
-  git clone https://github.com/chrisbarrett/.emacs.d.git chrisbarrett
-  git clone https://github.com/skeeto/.emacs.d.git skeeto
-  git clone https://github.com/a13/emacs.d.git a13
-  git clone https://github.com/IQSS/IQSS.emacs.git IQSS
-  git clone https://github.com/IvanMalison/dotfiles.git IvanMalison
-  git clone https://github.com/incandescentman/Emacs-Settings.git incandescentman
-  git clone https://github.com/joedicastro/dotfiles.git joedicastro
-  git clone https://github.com/jwiegley/dot-emacs.git jwiegley
-  git clone https://github.com/joodie/emacs-literal-config.git joodie
-  git clone https://github.com/magnars/.emacs.d.git magnars
-  git clone https://github.com/MatthewZMD/.emacs.d.git MatthewZMD
-  git clone https://github.com/NicolasPetton/emacs.d.git NicolasPetton
-  git clone https://gitlab.com/protesilaos/dotfiles.git protesilaos
-  git clone https://github.com/raxod502/radian.git raxod502
-  git clone https://github.com/DarwinAwardWinner/dotemacs.git DarwinAwardWinner
-  git clone https://github.com/sachac/.emacs.d.git sachac
-  git clone https://github.com/purcell/emacs.d.git purcell
-  git clone https://github.com/rememberYou/.emacs.d.git rememberYou
-  git clone https://github.com/xiongtx/.emacs.d.git xiongtx
-  git clone https://github.com/tecosaur/emacs-config.git tecosaur
-  git clone https://github.com/daviwil/emacs-from-scratch.git daviwil
-  git clone https://github.com/jakebox/jake-emacs.git jakebox
-  git clone https://github.com/Eason0210/dot-emacs.git eason0210
-  git clone https://github.com/DiamondBond/emacs.git diamondbond
-  git clone https://github.com/bbatsov/prelude.git prelude
-  git clone https://gitlab.com/skybert/my-little-friends.git skybert
-  git clone https://github.com/redguardtoo/emacs.d.git redguardtoo
-  git clone https://github.com/xuchunyang/emacs.d.git xuchunyang
-  git clone https://github.com/DamienCassou/emacs.d.git DamienCassou
-  git clone https://github.com/dakra/dmacs.git dakra
-  git clone https://github.com/PythonNut/quark-emacs.git PythonNut
-  git clone https://github.com/jordonbiondo/.emacs.d.git jordonbiondo
-  git clone https://github.com/cute-jumper/.emacs.d.git cutejumper
-  git clone https://github.com/waymondo/hemacs.git waymondo
-  git clone https://github.com/novoid/dot-emacs.git novoid
-  git clone https://github.com/kaushalmodi/.emacs.d.git kaushalmodi
-  git clone https://github.com/expez/.emacs.d.git expez
-  git clone https://github.com/matthewbauer/bauer.git matthewbauer
-  git clone https://github.com/Fuco1/.emacs.d.git Fuco1
-  git clone https://github.com/alhassy/emacs.d.git alhassy
-  git clone https://github.com/nathantypanski/emacs.d.git nathantypanski
-  git clone https://github.com/abo-abo/oremacs.git aboabo
-  git clone https://github.com/kuanyui/.emacs.d.git kuanyui
-  git clone https://github.com/karthink/.emacs.d.git karthink
-  git clone https://github.com/HannesHaglund/my-emacs.git hannes
-  git clone https://github.com/zoliky/dotemacs.git zoliky
-  git clone https://github.com/justinbarclay/.emacs.d.git justinbarclay
-  git clone https://github.com/fbkarsdorp/.emacs.d.git fbkarsdorp
-  git clone https://gitlab.com/bkhl/dotfiles.git bkhl
-  git clone https://github.com/frap/emacs-literate.git frap
-  git clone https://github.com/mxco86/emacs-config.git mxco86
-  git clone https://github.com/legoscia/dotemacs.git legoscia
-  git clone https://github.com/thierryvolpiatto/emacs-config.git thierryvolpiatto
+git clone https://github.com/bnbeckwith/bnb-emacs.git bnbeckwith
+git clone https://github.com/howardabrams/dot-files.git howardabrams
+git clone https://github.com/chrisbarrett/.emacs.d.git chrisbarrett
+git clone https://github.com/skeeto/.emacs.d.git skeeto
+git clone https://github.com/a13/emacs.d.git a13
+git clone https://github.com/IQSS/IQSS.emacs.git IQSS
+git clone https://github.com/IvanMalison/dotfiles.git IvanMalison
+git clone https://github.com/incandescentman/Emacs-Settings.git incandescentman
+git clone https://github.com/joedicastro/dotfiles.git joedicastro
+git clone https://github.com/jwiegley/dot-emacs.git jwiegley
+git clone https://github.com/joodie/emacs-literal-config.git joodie
+git clone https://github.com/magnars/.emacs.d.git magnars
+git clone https://github.com/MatthewZMD/.emacs.d.git MatthewZMD
+git clone https://github.com/NicolasPetton/emacs.d.git NicolasPetton
+git clone https://gitlab.com/protesilaos/dotfiles.git protesilaos
+git clone https://github.com/raxod502/radian.git raxod502
+git clone https://github.com/DarwinAwardWinner/dotemacs.git DarwinAwardWinner
+git clone https://github.com/sachac/.emacs.d.git sachac
+git clone https://github.com/purcell/emacs.d.git purcell
+git clone https://github.com/rememberYou/.emacs.d.git rememberYou
+git clone https://github.com/xiongtx/.emacs.d.git xiongtx
+git clone https://github.com/tecosaur/emacs-config.git tecosaur
+git clone https://github.com/daviwil/emacs-from-scratch.git daviwil
+git clone https://github.com/jakebox/jake-emacs.git jakebox
+git clone https://github.com/Eason0210/dot-emacs.git eason0210
+git clone https://github.com/DiamondBond/emacs.git diamondbond
+git clone https://github.com/bbatsov/prelude.git prelude
+git clone https://gitlab.com/skybert/my-little-friends.git skybert
+git clone https://github.com/redguardtoo/emacs.d.git redguardtoo
+git clone https://github.com/xuchunyang/emacs.d.git xuchunyang
+git clone https://github.com/DamienCassou/emacs.d.git DamienCassou
+git clone https://github.com/dakra/dmacs.git dakra
+git clone https://github.com/PythonNut/quark-emacs.git PythonNut
+git clone https://github.com/jordonbiondo/.emacs.d.git jordonbiondo
+git clone https://github.com/cute-jumper/.emacs.d.git cutejumper
+git clone https://github.com/waymondo/hemacs.git waymondo
+git clone https://github.com/novoid/dot-emacs.git novoid
+git clone https://github.com/kaushalmodi/.emacs.d.git kaushalmodi
+git clone https://github.com/expez/.emacs.d.git expez
+git clone https://github.com/matthewbauer/bauer.git matthewbauer
+git clone https://github.com/Fuco1/.emacs.d.git Fuco1
+git clone https://github.com/alhassy/emacs.d.git alhassy
+git clone https://github.com/nathantypanski/emacs.d.git nathantypanski
+git clone https://github.com/abo-abo/oremacs.git aboabo
+git clone https://github.com/kuanyui/.emacs.d.git kuanyui
+git clone https://github.com/karthink/.emacs.d.git karthink
+git clone https://github.com/HannesHaglund/my-emacs.git hannes
+git clone https://github.com/zoliky/dotemacs.git zoliky
+git clone https://github.com/justinbarclay/.emacs.d.git justinbarclay
+git clone https://github.com/fbkarsdorp/.emacs.d.git fbkarsdorp
+git clone https://gitlab.com/bkhl/dotfiles.git bkhl
+git clone https://github.com/frap/emacs-literate.git frap
+git clone https://github.com/mxco86/emacs-config.git mxco86
+git clone https://github.com/legoscia/dotemacs.git legoscia
+git clone https://github.com/thierryvolpiatto/emacs-config.git thierryvolpiatto
+git clone https://codeberg.org/vifon/emacs-config.git vifon
 
-  for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
-  for d in *; do cd $d; echo "UPDATES FOR $d"; git log --pretty=format:"%h%x09%an%x09%ad%x09%s" -5; cd -; done
+for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done
+for d in *; do cd $d; echo "UPDATES FOR $d"; git log --pretty=format:"%h%x09%an%x09%ad%x09%s" -5; cd -; done
 #+end_src
 * misc
 system-configuration-options variable, arch one is:
