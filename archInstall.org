@@ -208,7 +208,7 @@ if root partition full error clear cache all except most recent version with ~su
 if a package conflicts and get asked to remove can check what deps on it via ~pacman -Qi pkggname~
 
 steps are:
-- use ~sudo lvcreate -L18GB -s -n root_snapshot_20210317 /dev/mapper/vg0-lv_root~ to save state
+- use ~sudo lvcreate -L18GB -s -n root_snapshot_$(date +'%Y%m%d') /dev/mapper/vg0-lv_root~ to save state
 - use ~sudo pacman -Syu~ to upgrade
 - reboot
 - use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
