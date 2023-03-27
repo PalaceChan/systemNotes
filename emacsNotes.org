@@ -37,6 +37,23 @@ emacs style makes marginalia work for helpful but issue is that it is very slow
 for =M-x= and =find-file= not yet but in the case of =M-x= this seems variable is neat: ~helm-M-x-show-short-doc~ can toggle with ~C-]~
 * dir-locals
 use =((nil . ((buffer-read-only . t))))= per this [[https://emacs.stackexchange.com/questions/38607/how-to-open-all-files-from-specific-path-as-read-only-buffer][stack exchange]] to open in read-only for reference sub-directories
+* custom info manuals
+per this [[https://blog.nawaz.org/posts/2023/Mar/creating-info-manuals-and-adding-them-into-emacs/][blogpost]] from this [[https://www.reddit.com/r/emacs/comments/11wn6nx/creating_info_manuals_and_adding_them_into_emacs/][reddit post]] the snippet ~(add-to-list 'Info-additional-directory-list "/path/to/your/texinfo")~
+can go along with ~use-package info~ to point to a custom ~make texinfo~ manual from something using sphinx documentation
+remember after the =.info= file gets created to add a file called =dir= which can be copied from one of the emacs packages with an info manual like =magit=
+
+#+caption: python standard library demo
+#+begin_src bash
+cd ~/development
+git clone https://github.com/python/cpython.git
+cd cpython/Doc
+make venv # if you dont have sphinx-build and friends
+make texinfo
+(cd build/texinfo && make)
+mkdir -p ~/.texinfo/python
+rsync -avz build/texinfo/* ~/.texinfo/python/
+cp ~/.emacs.d/elpa/magit-20230215.1054/dir ~/.texinfo/python/ # and rename it
+#+end_src
 * emacs reference configs
 a compiled list: https://github.com/caisah/emacs.dz
 
