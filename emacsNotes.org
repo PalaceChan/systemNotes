@@ -118,6 +118,9 @@ declare -A repos=(
     ["https://codeberg.org/vifon/emacs-config.git"]="vifon"
     ["https://git.sr.ht/~northyear/dotemacs"]="northyear"
     ["https://github.com/zsxh/emacs.d.git"]="zsxh"
+    ["https://github.com/skyler544/rex.git"]="skyler544"
+    ["https://github.com/rdbeni0/emacs.d.git"]="rdbeni0"
+    ["https://github.com/jackkamm/.emacs.d.git"]="jackkamm"
 )
 
 pushd ~/development/emacsRefCfgs &> /dev/null
@@ -135,7 +138,7 @@ popd
 #+begin_src bash
 bash ~/scripts/emacs_clones.sh
 (cd ~/development/emacsRefCfgs && for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done)
-(cd ~/development/emacsRefCfgs && for d in *; do cd $d; echo "UPDATES FOR $d"; git --no-pager log --pretty=format:"%h%x09%an%x09%ad%x09%s" --since="1 month ago" --no-merges -10; cd -; done)
+(cd ~/development/emacsRefCfgs && for d in *; do cd $d; echo "UPDATES FOR $d"; git --no-pager log --pretty=format:"%h%x09%an%x09%ad%x09%s" --since="2 weeks ago" --no-merges -10; cd -; done)
 #+end_src
 * misc
 system-configuration-options variable, arch one is:
