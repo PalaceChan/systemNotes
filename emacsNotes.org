@@ -122,6 +122,7 @@ declare -A repos=(
     ["https://github.com/rdbeni0/emacs.d.git"]="rdbeni0"
     ["https://github.com/jackkamm/.emacs.d.git"]="jackkamm"
     ["https://github.com/amno1/.emacs.d.git"]="amno1"
+    ["https://github.com/benjamin-asdf/dotfiles.git"]="benjamin-asdf"
 )
 
 pushd ~/development/emacsRefCfgs &> /dev/null
@@ -142,8 +143,11 @@ bash ~/scripts/emacs_clones.sh
 (cd ~/development/emacsRefCfgs && for d in *; do cd $d; echo "UPDATES FOR $d"; git --no-pager log --pretty=format:"%h%x09%an%x09%ad%x09%s" --since="2 weeks ago" --no-merges -10; cd -; done)
 #+end_src
 * misc
+** how arch builds emacs
 system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+** tips
+~M-x apropos-user-option~ then a package name to see all the configurable variables
 * troubleshooting
 byte recompiling everything refs:
 https://emacs.stackexchange.com/questions/72655/after-updating-my-packages-two-packages-are-not-working-anymore-how-to-solve-t)
