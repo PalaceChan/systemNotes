@@ -54,6 +54,21 @@ mkdir -p ~/.texinfo/python
 rsync -avz build/texinfo/* ~/.texinfo/python/
 cp ~/.emacs.d/elpa/magit-20230215.1054/dir ~/.texinfo/python/ # and rename it
 #+end_src
+* org settings for a good research notebook
+#+begin_example
+:PROPERTIES:
+,#+TITLE: some title
+,#+PROPERTY: header-args:R :session *R:topic:* :eval never-export :exports code
+,#+PROPERTY: header-args:python :session *Python[topic]* :eval never-export :exports code
+,#+EXPORT_EXCLUDE_TAGS: noexport
+,#+OPTIONS: num:nil
+,#+OPTIONS: ^:nil
+,#+OPTIONS: toc:nil
+,#+OPTIONS: tex:imagemagick
+,#+EXCLUDE_TAGS: noexport
+,#+EXPORT_FILE_NAME: README.md
+:END:
+#+end_example
 * emacs reference configs
 a compiled list: https://github.com/caisah/emacs.dz
 
@@ -146,9 +161,10 @@ bash ~/scripts/emacs_clones.sh
 ** how arch builds emacs
 system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
-** tips
+** random tips
 ~M-x apropos-user-option~ then a package name to see all the configurable variables
 * troubleshooting
+** general
 byte recompiling everything refs:
 https://emacs.stackexchange.com/questions/72655/after-updating-my-packages-two-packages-are-not-working-anymore-how-to-solve-t)
 https://stackoverflow.com/questions/24725778/how-to-rebuild-elpa-packages-after-upgrade-of-emacs
@@ -156,3 +172,29 @@ https://stackoverflow.com/questions/24725778/how-to-rebuild-elpa-packages-after-
 #+begin_src emacs-lisp
 (byte-recompile-directory package-user-dir nil 'force)
 #+end_src
+** some fixes for mid may 2023 update
+to fix the org error message: https://emacs.stackexchange.com/questions/70081/how-to-deal-with-this-message-important-please-install-org-from-gnu-elpa-as-o
+the answer with 4 steps worked
+
+for doom-modeline just wait for this commit to get to melpa: https://github.com/seagle0128/doom-modeline/commit/9d6a39f97055b6b92ea2c51decb9547bad5106dc
+or add the quote yourself after it updates
+
+then for orgit error with emacsql can delete emacsql old package and reinstall a fresh one as well as do the same for closql
+after that is done you may get this warning but all should be ok at least (it will build it)
+
+#+begin_quote
+Warning (emacsql): Since your Emacs does not come with
+built-in SQLite support [1], but does support C modules, the best
+EmacSQL backend is provided by the third-party `sqlite3' package
+[2].
+
+Please install the `sqlite3' Elisp package using your preferred
+Emacs package manager, and install the SQLite shared library
+using your distribution's package manager.  That package should
+be named something like `libsqlite3' [3] and NOT just `sqlite3'.
+
+In the current Emacs instance the legacy backend is used, which
+uses a custom SQLite executable.  Using an external process like
+that is less reliable and less performant, and in a few releases
+support for that might be removed.
+#+end_quote
