@@ -180,7 +180,7 @@ for doom-modeline just wait for this commit to get to melpa: https://github.com/
 or add the quote yourself after it updates
 
 then for orgit error with emacsql can delete emacsql old package and reinstall a fresh one as well as do the same for closql
-after that is done you may get this warning but all should be ok at least (it will build it)
+after that is done you may get this warning but all should be ok at least (it will build it) - but also very easy to just install sqlite3 package (likely libsqlite3 already installed ~pacman -Ss libsqlite3~)
 
 #+begin_quote
 Warning (emacsql): Since your Emacs does not come with
