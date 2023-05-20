@@ -138,6 +138,7 @@ declare -A repos=(
     ["https://github.com/jackkamm/.emacs.d.git"]="jackkamm"
     ["https://github.com/amno1/.emacs.d.git"]="amno1"
     ["https://github.com/benjamin-asdf/dotfiles.git"]="benjamin-asdf"
+    ["https://github.com/garyo/emacs-config.git"]="garyo"
 )
 
 pushd ~/development/emacsRefCfgs &> /dev/null
