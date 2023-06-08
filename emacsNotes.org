@@ -139,6 +139,9 @@ declare -A repos=(
     ["https://github.com/amno1/.emacs.d.git"]="amno1"
     ["https://github.com/benjamin-asdf/dotfiles.git"]="benjamin-asdf"
     ["https://github.com/garyo/emacs-config.git"]="garyo"
+    ["https://github.com/munen/emacs.d.git"]="munen"
+    ["https://github.com/condy0919/.emacs.d.git"]="condy0919"
+    ["https://github.com/oantolin/emacs-config.git"]="oantolin"
 )
 
 pushd ~/development/emacsRefCfgs &> /dev/null
@@ -164,6 +167,8 @@ system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
 ** random tips
 ~M-x apropos-user-option~ then a package name to see all the configurable variables
+** emacs 29 prep
+look into ~treesit-auto~ package
 * troubleshooting
 ** general
 byte recompiling everything refs:
