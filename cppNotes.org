@@ -1,0 +1,20 @@
+* tricks for annotating entry and exit from regions in disassembly
+one tricky
+#+begin_src C
+template<int>
+__attribute__((noinline)) void ASM_MARK() {
+    [[maybe_unused]] volatile int noop = 0;
+}
+
+void foo() {
+    ASM_MARK<1>();
+    volatile int x = 7;
+    ASM_MARK<2>();
+}
+#+end_src
+
+another trick uses these pairs
+#+begin_src C
+void __attribute__((noinline)) enter() { volatile asm(""); }
+void __attribute__((noinline)) leave() { volatile asm(""); }
+#+end_src
