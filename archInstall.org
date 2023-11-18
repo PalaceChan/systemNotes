@@ -209,7 +209,7 @@ if a package conflicts and get asked to remove can check what deps on it via ~pa
 
 steps are:
 - use ~sudo lvcreate -L18GB -s -n root_snapshot_$(date +'%Y%m%d') /dev/mapper/vg0-lv_root~ to save state
-- use ~sudo pacman -Syu~ to upgrade
+- use ~sudo pacman -Syu --ignore emacs~ to upgrade
 - reboot
 - use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
 * removing packages
