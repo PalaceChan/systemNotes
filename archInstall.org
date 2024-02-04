@@ -195,7 +195,18 @@ and it useable
 for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (it can auto mount external drive above)
 
 * lifetime notes
-If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
+** If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
+** to ssh/scp stuff across two of these
+#+begin_src bash
+systemctl start sshd
+ip -br a # see ip addr this way the 192.*
+# ssh username@<the ip> from other computer
+systemctl stop sshd # when done
+#+end_src
+
+for a smart merge using rsync see https://superuser.com/questions/547282/which-is-the-rsync-command-to-smartly-merge-two-folders
+so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =--dry-run= to sanity check)
+
 * updating mirrors
 from https://wiki.archlinux.org/title/mirrors
 go to https://archlinux.org/mirrorlist/ to get a new list and replace below (=/sudo::/path/to/file= for tramp)
