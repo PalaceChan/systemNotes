@@ -205,7 +205,7 @@ systemctl stop sshd # when done
 #+end_src
 
 for a smart merge using rsync see https://superuser.com/questions/547282/which-is-the-rsync-command-to-smartly-merge-two-folders
-so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =--dry-run= to sanity check)
+so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =-n= to sanity check and remove =-b= if want no backups created)
 
 * updating mirrors
 from https://wiki.archlinux.org/title/mirrors
