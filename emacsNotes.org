@@ -211,3 +211,6 @@ uses a custom SQLite executable.  Using an external process like
 that is less reliable and less performant, and in a few releases
 support for that might be removed.
 #+end_quote
+** failed to verify signature archive-contents when refreshing package list
+solution: https://stackoverflow.com/a/78553384
+tldr: ~(setq package-check-signature nil)~ then ~M-x package-refresh-contents~ and install latest =gnu-elpa-keyring-update=
