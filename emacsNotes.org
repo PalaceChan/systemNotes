@@ -185,6 +185,11 @@ https://stackoverflow.com/questions/24725778/how-to-rebuild-elpa-packages-after-
 #+begin_src emacs-lisp
 (byte-recompile-directory package-user-dir nil 'force)
 #+end_src
+
+to byte recompile an individual package (the t is to force)
+#+begin_src emacs-lisp
+(byte-recompile-directory (expand-file-name "gptel-20240905.1946" package-user-dir) 0 t)
+#+end_src
 ** some fixes for mid may 2023 update
 to fix the org error message: https://emacs.stackexchange.com/questions/70081/how-to-deal-with-this-message-important-please-install-org-from-gnu-elpa-as-o
 the answer with 4 steps worked
@@ -214,3 +219,5 @@ support for that might be removed.
 ** failed to verify signature archive-contents when refreshing package list
 solution: https://stackoverflow.com/a/78553384
 tldr: ~(setq package-check-signature nil)~ then ~M-x package-refresh-contents~ and install latest =gnu-elpa-keyring-update=
+** after updating gptel to 20240905.1946
+was hitting transient issues, i applied [[https://github.com/karthink/gptel/pull/361/commits/c820c0cb85b59cf663d5da0acb997789e2c7c2a0][this suggestion]] and byte recompiled gptel to work around for now. The real solution should arrive via transient as per [[https://github.com/karthink/gptel/issues/348][this thread]]
