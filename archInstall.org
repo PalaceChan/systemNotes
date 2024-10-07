@@ -159,31 +159,35 @@ run ~alsamixer~ to ensure channels are unmuted, run ~speaker-test~ to test
 if there is annoying beep, alsamixer might have a beep channel, mute it with =M=
 * miscellaneous packages
 Useful packages to have on any system
-|------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
-| Package          | Notes                                    | Command                                                                                         |
-|------------------+------------------------------------------+-------------------------------------------------------------------------------------------------|
-| isync            | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                          |
+|------------------+------------------------------------------+---------------------------------------------------------------------------------------------|
+| Package          | Notes                                    | Command                                                                                     |
+|------------------+------------------------------------------+---------------------------------------------------------------------------------------------|
+| isync            | yields mbsync used by mu4e to pull email | ~sudo pacman -S isync~                                                                        |
 | mu-git           | mu and mu4e in AUR                       | ~git clone https://aur.archlinux.org/mu.git~ then ~makepkg -si~                                 |
 | virtualbox       | needs AUR extension                      | ~sudo pacman -S virtualbox~ ~git git clone https://aur.archlinux.org/virtualbox-ext-oracle.git~ |
-| telegram-desktop |                                          | ~sudo pacman -S telegram-desktop~                                                               |
-| telega           | emacs equivalent (see packageNotes.org)  | AUR for tdlib, git from src for the rest (incuding a C server)                                  |
-| mlocate          | for updatedb to do custom helm locates   | ~sudo pacman -S mlocate~                                                                        |
-| ctags            | to generate TAGS                         | ~sudo pacman -S ctags~                                                                          |
-| clang            | llvm frontend                            | ~sudo pacman -S clang~                                                                          |
-| llvm             | llvm libs                                | ~sudo pacman -S llvm~                                                                           |
-| lsof             |                                          | ~sudo pacman -S lsof~                                                                           |
-| strace           |                                          | ~sudo pacman -S strace~                                                                         |
-| valgrind         |                                          | ~sudo pacman -S valgrind~                                                                       |
+| telegram-desktop |                                          | ~sudo pacman -S telegram-desktop~                                                             |
+| telega           | emacs equivalent (see packageNotes.org)  | AUR for tdlib, git from src for the rest (incuding a C server)                              |
+| mlocate          | for updatedb to do custom helm locates   | ~sudo pacman -S mlocate~                                                                      |
+| ctags            | to generate TAGS                         | ~sudo pacman -S ctags~                                                                        |
+| clang            | llvm frontend                            | ~sudo pacman -S clang~                                                                        |
+| llvm             | llvm libs                                | ~sudo pacman -S llvm~                                                                         |
+| lsof             |                                          | ~sudo pacman -S lsof~                                                                         |
+| strace           |                                          | ~sudo pacman -S strace~                                                                       |
+| valgrind         |                                          | ~sudo pacman -S valgrind~                                                                     |
 | stdman           | c++11/14 man pages                       | ~git clone https://aur.archlinux.org/stdman-git.git~  then ~makepkg -si~                        |
-| python-black     | /usr/bin/black                           | ~sudo pacman -S python-black~                                                                   |
-| python-pip       |                                          | ~sudo pacman -S python-pip~                                                                     |
-| jupyterlab       | for elpy use of course                   | ~sudo pacman -S jupyterlab~                                                                     |
-| perf             | perf events                              | ~sudo pacman -S perf~                                                                           |
-| peek             | gif recorder                             | ~sudo pacman -S peek~                                                                           |
-| ghostscript      | pdf manip                                | ~sudo pacman -S ghostscript~                                                                    |
-| pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                          |
-| libvterm         | for vterm in emacs                       | ~sudo pacman -S libvterm~                                                                       |
-| texlive-most     | covers needs for tex                     | ~sudo pacman -S texlive-most~                                                                   |
+| python-black     | /usr/bin/black                           | ~sudo pacman -S python-black~                                                                 |
+| python-pip       |                                          | ~sudo pacman -S python-pip~                                                                   |
+| jupyterlab       | for elpy use of course                   | ~sudo pacman -S jupyterlab~                                                                   |
+| perf             | perf events                              | ~sudo pacman -S perf~                                                                         |
+| peek             | gif recorder                             | ~sudo pacman -S peek~                                                                         |
+| ghostscript      | pdf manip                                | ~sudo pacman -S ghostscript~                                                                  |
+| pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                        |
+| libvterm         | for vterm in emacs                       | ~sudo pacman -S libvterm~                                                                     |
+| texlive-most     | covers needs for tex                     | ~sudo pacman -S texlive-most~                                                                 |
+| qpdf             | encrypt/decrypt pdfs                     | ~sudo pacman -S qpdf~                                                                         |
+| xournalpp        | annotate pdfs (e.g. to sign them)        | ~sudo pacman -S xournalpp~                                                                    |
+
+
 * external drive backups
 first time only need to make a partition on the external drive and then an ext4 fs.
 for the partition just do ~sudo fdisk~ on the device (e.g. /dev/sda) and ~g~ for GPT label
@@ -206,7 +210,11 @@ systemctl stop sshd # when done
 
 for a smart merge using rsync see https://superuser.com/questions/547282/which-is-the-rsync-command-to-smartly-merge-two-folders
 so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =-n= to sanity check and remove =-b= if want no backups created)
-
+** annotating a pdf, unencrypting and decrypting
+use xournal++ (package xournalpp) to open it, can use text box or draw. Then export it as pdf.
+To decrypt a pdf: ~qpdf --password='pwd' --decrypt input.pdf output.pdf~
+To encrypt a pdf: ~qpdf --encrypt 'pwd' 'pwd' 256 -- input.pdf output.pdf~
+(the first password is to open, the second is to allow modifying/printing/annotating/extracting content)
 * updating mirrors
 from https://wiki.archlinux.org/title/mirrors
 go to https://archlinux.org/mirrorlist/ to get a new list and replace below (=/sudo::/path/to/file= for tramp)
