@@ -1,9 +1,16 @@
 * reference guides on youtube
 https://www.youtube.com/watch?v=DPLnBPM4DhI "Arch Linux: Full Installation Guide - A complete tutorial/walthrough in one video!"
 * create iso image
-easiest is to use ~dd~ on a thumb drive like this:
+download an iso like this
+#+begin_src bash
+rsync -av rsync://mirror.adectra.com/archlinux/iso/2024.11.01/ ./arch-iso-20241101/
+#+end_src
+then cat it into the usb drive (lsblk or fdisk -lu to find which device it is)
 #+BEGIN_SRC bash
-dd bs=4M if=/path/to/arch.iso of=/dev/sdx oflag=sync
+sudo -i
+cat /path/to/the.iso > /dev/sdb # usually it is /dev/sdb as main disk is sda
+sync
+exit
 #+END_SRC
 to make the thumb drive usable again after that one must repartition like this:
 #+BEGIN_SRC bash
@@ -50,6 +57,7 @@ mkdir /mnt/boot /mnt/home /mnt/etc
 mount /dev/sdx2 /mnt/boot
 mount /dev/vg0/lv_home /mnt/home
 #+END_SRC
+
 with everything mounted make the =fstab= file and strap on:
 #+BEGIN_SRC bash
 genfstab -U -p /mnt >> /mnt/etc/fstab
@@ -236,3 +244,44 @@ steps are:
 
 look for them with ~pacman -Q | grep~ and remove with their deps not required by others with ~sudo pacman -Rs pkgname~
 (can also query for orphan/not-needed packages with ~pacman -Qdt~)
+* troubleshooting
+** chrooting into lvm system
+a good reference link: https://gist.github.com/uglide/5f6f23903dac6b5f2567 but essentially
+#+begin_src bash
+vgscan # should show vg0 can also run pvscan
+vgchange -ay # activates vg0 now lvscan shows the familiar lv_root lv_home and any snapshots that had been made
+#+end_src
+
+mount the lvm setup (similar to how it was done in the setup instructions above)
+#+begin_src bash
+mount /dev/vg0/lv_root /mnt
+
+mount /dev/nvme0n1p2 /mnt/boot
+mkdir /mnt/boot/efi || true
+mount /dev/nvme0n1p1 /mnt/boot/efi
+mount /dev/vg0/lv_home /mnt/home
+
+mount --bind /dev /mnt/dev
+mount --bind /proc /mnt/proc
+mount --bind /sys /mnt/sys
+
+mount -t efivarfs efivarfs /mnt/sys/firmware/efi/efivars # to use grub-install and such
+
+#chroot /mnt /bin/bash # otherwise zsh default but should use arch-chroot anyways
+arch-chroot /mnt
+#+end_src
+
+at the end
+#+begin_src bash
+exit
+umount -R /mnt
+shutdown now
+#+end_src
+** 20241110 upgrade rescue
+ran
+#+begin_src bash
+grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+grub-mkconfig -o /boot/grub/grub.cfg
+#+end_src
+above worked, i was able to confirm it looked sane by running ~efibootmgr -v~ i could see the =grub_uefi= as the first option and it seemed to point to the right place.
+([[https://unix.stackexchange.com/questions/787335/arch-linux-not-booting-and-unable-to-grub-install-from-within-chroot][stack exchange solution thread]])
