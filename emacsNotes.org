@@ -1,4 +1,4 @@
-* compiling native comp from source
+* compiling native comp branch of emacs from source
 ** First download the code (could git clone or src tarball from https://git.savannah.gnu.org/cgit/emacs.git/?h=feature/native-comp)
 ** in that directory run autogen.sh
 ** Then run a command like this:
@@ -174,8 +174,13 @@ system-configuration-options variable, arch one is:
 "--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
 ** random tips
 ~M-x apropos-user-option~ then a package name to see all the configurable variables
-** emacs 29 prep
-look into ~treesit-auto~ package
+* upgrading
+** upgrading to emacs 29
+first back things up ~cp -r ~~/.emacs.d ~~/.emacs.d.backup28To29~
+then upgrade ~sudo pacman -S emacs~
+
+made the legacy tree-sitter configuration inactive and flipped on built-in along with treesit-auto in [[https://github.com/PalaceChan/Configuration/commit/9a6bdae6eecd210f08a9a2a60cb26c164a9bc016][this commit]]
+and other minor addenda in [[https://github.com/PalaceChan/Configuration/commit/d9dca75476ec6fe8f89e5efdf72944dbd82c891e][here]] and [[https://github.com/PalaceChan/Configuration/commit/a2c8d42d17d4c06143caf316065b13424456d2c7][here]]
 * troubleshooting
 ** general
 byte recompiling everything refs:
