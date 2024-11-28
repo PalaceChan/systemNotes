@@ -242,7 +242,7 @@ steps are:
 * removing packages
 [[https://wiki.archlinux.org/title/pacman#Removing_packages][wiki]]
 
-look for them with ~pacman -Q | grep~ and remove with their deps not required by others with ~sudo pacman -Rs pkgname~
+look for them with ~pacman -Q | grep~ and remove with their deps not required by others with ~sudo pacman -Rs pkgname~ (just ~pacman -Rs -p pkgname~ for dry-run)
 (can also query for orphan/not-needed packages with ~pacman -Qdt~)
 * troubleshooting
 ** chrooting into lvm system
