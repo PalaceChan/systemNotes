@@ -151,6 +151,7 @@ declare -A repos=(
     ["https://gitlab.com/Clsmith1/dotfiles.git"]="clsmith1"
 )
 
+mkdir -p ~/development/emacsRefCfgs
 pushd ~/development/emacsRefCfgs &> /dev/null
 for url in "${!repos[@]}"; do
     name=${repos[$url]}
