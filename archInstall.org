@@ -1,5 +1,5 @@
 * reference guides on youtube
-https://www.youtube.com/watch?v=DPLnBPM4DhI "Arch Linux: Full Installation Guide - A complete tutorial/walthrough in one video!"
++https://www.youtube.com/watch?v=DPLnBPM4DhI "Arch Linux: Full Installation Guide - A complete tutorial/walthrough in one video!"+ (dead but channel is Learn Linux TV)
 * create iso image
 download an iso like this
 #+begin_src bash
@@ -18,7 +18,8 @@ sudo wipefs --all /dev/sdx
 sudo fdisk /dev/sdx #followed by g, n, <RET> to make single partition and w to commit
 sudo mkfs.ext4 /dev/sdx1 #to put a fresh file system into the partition made above
 #+END_SRC
-* boot into image, get internet, set time, partition
+* original install with lvm2 (Jul 2019)
+** boot into image, get internet, set time, partition
 need to verify in UEFI mode by checking for presence of ~file /sys/firmware/efi/efivars~
 next internet run ~wifi-menu~ and check with ~ip a~ or ~ping -c 2 www.google.com~
 if that is fine next steps are a quick time set
@@ -64,7 +65,7 @@ genfstab -U -p /mnt >> /mnt/etc/fstab
 pacstrap -i /mnt base
 arch-chroot /mnt
 #+END_SRC
-* initial setup now in your ssd
+** initial setup now in your ssd
 first set the timezone and hwclock
 #+BEGIN_SRC bash
 ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
@@ -107,7 +108,7 @@ cp /etc/fstab /etc/fstab.bak
 echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
 #+END_SRC
 ready to go at this point so ~exit; umount -R /mnt; reboot~
-* upon boot
+** upon boot
 verify everything works then recommend ~reboot~ and in grub menu type =e= to edit the kernel params
 and add ~mitigations=off~ to avoid having poor performance for stupid reasons. after booting
 check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/default/grub~ adding it to
@@ -144,9 +145,175 @@ set up a global gitignore (and github auth)
   git config --global --add github.user <user>
   git config --global --add github.oauth-token <token>
 #+end_src
+* install without lvm2 but with luks (Dec 2024)
+** boot and ensure uefi/wifi
+boot into iso, verify =/sys/firmware/efi/fw_platform_size=  (must exist, likely contain value 64) then =iwctl= to connect to wifi
+#+begin_src bash
+iwctl # will enter a shell, do 'station list', then something like 'station wlan0 get-networks'
+iwctl --passphrase <XXX> station wlan0 connect <WIFI-NETWORK-NAME>
+
+ip a # check you have ip addr
+ping archlinux.org # ping check
+#+end_src
+
+** partition and format disks
+will want to mount ESP to =/efi= (separate from =/boot=) so one can have ext4 for it and separate concern from the fat fs for bootloader
+(this is more similar to learn linux tv approach) - ([[https://wiki.archlinux.org/title/EFI_system_partition#Typical_mount_points][arch wiki reference]])
+
+#+begin_src bash
+lsblk -o NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MOUNTPOINT,LABEL # use along the way to see devices
+fdisk /dev/nvme0n1 # type g for new GPT (make an efi 500MB, boot 500MB, rest will be root)
+
+mkfs.fat -F32 -n "EFI" /dev/nvme0n1p1
+mkfs.ext4 -L "BOOT" /dev/nvme0n1p2
+
+cryptsetup luksFormat /dev/nvme0n1p3
+cryptsetup open /dev/nvme0n1p3 cryptroot # opens it naming it cryptroot
+mkfs.ext4 -L "ROOT" /dev/mapper/cryptroot
+#+end_src
+
+#+begin_src bash
+mount /dev/mapper/cryptroot /mnt
+mount --mkdir /dev/nvme0n1p1 /mnt/efi
+mount --mkdir /dev/nvme0n1p2 /mnt/boot
+#+end_src
+
+** mirrors and pacstrap
+uncomment line that says ParallelDownloads via ~nano /etc/pacman.conf~
+=/etc/pacman.d/mirrorlist= carries over from live env to installed system so get good mirrors
+#+begin_src bash
+pacman -Syy reflector
+reflector -c US -a 12 --sort rate --save /etc/pacman.d/mirrorlist
+pacman -Syy # refresh mirror list
+#+end_src
+
+install essential packages
+#+begin_src bash
+pacstrap -K /mnt base base-devel emacs networkmanager cryptsetup grub efibootmgr linux linux-headers linux-firmware intel-ucode reflector
+#+end_src
+
+** fstab and chroot
+#+begin_src bash
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+#+end_src
+
+** set up swapfile
+#+begin_src bash
+fallocate -l 38G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+#+end_src
+** time setup
+#+begin_src bash
+ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+hwclock --systohc # generates /etc/adjtime
+
+systemctl enable systemd-timesyncd.service
+#+end_src
+
+** localization
+#+begin_src bash
+locale-gen # after uncomment en_US.UTF-8 UTF-8 from /etc/locale.gen
+#+end_src
+create =/etc/locale.conf= with content =LANG=en_US.UTF-8=
+** hostname
+name it on =/etc/hostname= and also in =/etc/hosts= add
+#+begin_example
+127.0.0.1 localhost
+::1       localhost
+127.0.1.1 yourhostname.localdomain yourhostname
+#+end_example
+** set root pwd, add user
+~passwd~ to set root pwd, then uncomment =%wheel ALL=(ALL) ALL= line in ~EDITOR='emacs -nw' visudo~ then ~useradd -m -g users -G wheel bla~ then ~passwd bla~
+** networking
+#+begin_src bash
+systemctl enable NetworkManager
+#+end_src
+** mkinitcpio (given luks)
+edit =/etc/mkinitcpio.conf= in the =HOOKS= line and add =encrypt= between =block= and =filesystems=
+regenerate ~mkinitcpio -P~
+** boot loader
+#+begin_src bash
+grub-install --efi-directory=/efi --boot-directory=/boot --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+#+end_src
+
+because of encryption have to edit =/etc/default/grub=:
+#+begin_src bash
+blkid -o value -s UUID /dev/sda3 >> /etc/default/grub # A
+blkid -o value -s UUID /dev/mapper/cryptroot >> /etc/default/grub # B
+#+end_src
+and add to =GRUB_CMDLINE_LINUX= an entry "cryptdevice=UUID=A:cryptroot root=UUID=B" (if A is the uuid of the encrypted partition, and B of the unencrypted cryptroot)
+
+#+begin_src bash
+grub-mkconfig -o /boot/grub/grub.cfg
+
+efibootmgr -v # to confirm the UEFI boot entries
+# /efi/EFI/grub_uefi should be there too
+#+end_src
+
+exit chroot and reboot into new system
+#+begin_src bash
+exit
+umount -R /mnt
+reboot # remove the usb now
+#+end_src
+** install more packages
+#+begin_src bash
+# likely first connect to wifi via nmtui
+sudo pacman -S bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
+#+end_src
+
+bootstrap some home dirs and content (like dotfiles)
+#+begin_src bash
+mkdir development docs history rabbit; cd development
+git clone https://github.com/PalaceChan/helm-shell-history.git
+git clone https://github.com/PalaceChan/Configuration.git dotfiles
+git clone https://github.com/PalaceChan/systemNotes.git
+git clone https://github.com/PalaceChan/scripts.git
+
+(cd ~/development/dotfiles && for f in .gitconfig .gitignore .Rprofile .tmux.conf .Xmodmap .xinitrc .Xresources .mc-lists.el .gdbinit .bash_profile .bashrc; do cp -v $f ~/; done)
+cp ~/development/dotfiles/dump_history.sh ~/history/
+#+end_src
+
+** set up hibernation
+edit =/etc/mkinitcpio.conf= and add resume after filesystems (which should already be after encrypt) then regen ~mktinitcpio -P~
+
+edit =/etc/default/grub= and append to =GRUB_CMDLINE_LINUX= "resume=UUID=B resume_offset=123456"
+
+where the offset value comes from a command like and B is the uuid of the decrypted root volume
+#+begin_src bash
+filefrag -v /swapfile # physical_offset column first row
+#filefrag -v /swapfile | awk '$1=="0:" {print substr($4, 1, length($4)-2)}'
+# findmnt -no UUID -T <swap_file> can help confirm B
+#+end_src
+
+then
+#+begin_src bash
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+#+end_src
+
+to hibernate you can say
+#+begin_src bash
+systemctl hibernate # suspend would be sleeping in low powered RAM vs hibernate will be to disk via swapfile
+# can also say hybrid-sleep which suspends but saves state to disk so can resume if power gets lost
+#+end_src
+
+control behaviors in =/etc/systemd/logind.conf= then bounce the daemon ~sudo systemctl restart systemd-logind~
+** references
+| link                                        | notes                                                                               |
+| [[https://wiki.archlinux.org/title/Installation_guide][arch-wiki install guide]]               |                                                                                     |
+| [[https://youtu.be/kXqk91R4RwU?si=36uooJGxfcU7KYn8][DenshiVideo, Arch Linux: An Encrypted Guide]] | (uses single boot partition)                                                        |
+| [[https://youtu.be/XNJ4oKla8B0?si=X0Gsz4Kr16_X8LDw][EF Linux Made Simple]]                  |                                                                                     |
+| [[https://youtu.be/FxeriGuJKTM?si=8GxoOvjYR0ia7E6K][Learn Linux TV]]                              |                                                                                     |
+| [[https://youtu.be/Xek3TGKzLWw?si=TefLOYmPpHIoY1AH][setup hibernation short youtube clip]]        | (forgets to add resume to the hooks in mkinitcpio.conf between filesystms and fsck) |
+| [[https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate][arch wiki on power management]]               |                                                                                     |
 * openbox
 #+BEGIN_SRC bash
 sudo pacman -S openbox obconf
+# mkdir p ~/.config && cp -r ~/development/dotfiles/.config/openbox ~/.config/ # if bootstrapping from github
 #+END_SRC
 then add exec openbox-session to bottom of xinitrc
 * lvm snapshots
