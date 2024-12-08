@@ -263,7 +263,7 @@ reboot # remove the usb now
 ** install more packages
 #+begin_src bash
 # likely first connect to wifi via nmtui
-sudo pacman -S bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
+sudo pacman -S bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox openssh obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
 #+end_src
 
 bootstrap some home dirs and content (like dotfiles)
@@ -276,6 +276,8 @@ git clone https://github.com/PalaceChan/scripts.git
 
 (cd ~/development/dotfiles && for f in .gitconfig .gitignore .Rprofile .tmux.conf .Xmodmap .xinitrc .Xresources .mc-lists.el .gdbinit .bash_profile .bashrc; do cp -v $f ~/; done)
 cp ~/development/dotfiles/dump_history.sh ~/history/
+# in .gitconfig copy over manually the oauth token (or rsync it over)
+# rsync over .authinfo for openai key (or get fresh from openai)
 #+end_src
 
 ** set up hibernation
