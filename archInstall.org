@@ -263,7 +263,7 @@ reboot # remove the usb now
 ** install more packages
 #+begin_src bash
 # likely first connect to wifi via nmtui
-sudo pacman -S bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox openssh obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
+sudo pacman -S alsa-utils bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox openssh obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
 #+end_src
 
 bootstrap some home dirs and content (like dotfiles)
@@ -334,6 +334,9 @@ use ~xprop | grep CLASS~ command (package =xorg-xprop=) to click on windows and 
 * audio
 run ~alsamixer~ to ensure channels are unmuted, run ~speaker-test~ to test
 if there is annoying beep, alsamixer might have a beep channel, mute it with =M=
+
+do ~lspci | grep -i audio~ to see soundcard, can also consult arch wiki for lenovo models [[https://wiki.archlinux.org/title/Category:Lenovo][here]] and one may need alsa-mixer fimrware (package sof-firmware)
+then also ~aplay -l~ will show soundcards. installing sof-firmware rebuilds mkinitcpio so you have to reboot (this usually resolves headphones, but not laptop speakers)
 * miscellaneous packages
 Useful packages to have on any system
 |------------------+------------------------------------------+---------------------------------------------------------------------------------------------|
