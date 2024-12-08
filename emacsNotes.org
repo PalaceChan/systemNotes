@@ -226,3 +226,5 @@ solution: https://stackoverflow.com/a/78553384
 tldr: ~(setq package-check-signature nil)~ then ~M-x package-refresh-contents~ and install latest =gnu-elpa-keyring-update=
 ** after updating gptel to 20240905.1946
 was hitting transient issues, i applied [[https://github.com/karthink/gptel/pull/361/commits/c820c0cb85b59cf663d5da0acb997789e2c7c2a0][this suggestion]] and byte recompiled gptel to work around for now. The real solution should arrive via transient as per [[https://github.com/karthink/gptel/issues/348][this thread]]
+** new setup bootstrapped 20241207 on t14g5 laptop
+a couple of packages didnt install correctly (no autoloads.el generated), had to rm -rf them and then install them from package menu again
