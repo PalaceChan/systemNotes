@@ -75,7 +75,7 @@ a compiled list: https://github.com/caisah/emacs.dz
 #+begin_src bash :tangle ~/scripts/emacs_clones.sh :mkdirp yes
 declare -A repos=(
     ["https://github.com/bnbeckwith/bnb-emacs.git"]="bnbeckwith"
-    ["https://github.com/howardabrams/dot-files.git"]="howardabrams"
+    ["https://github.com/howardabrams/hamacs.git"]="hamacs"
     ["https://github.com/chrisbarrett/.emacs.d.git"]="chrisbarrett"
     ["https://github.com/skeeto/.emacs.d.git"]="skeeto"
     ["https://github.com/a13/emacs.d.git"]="a13"
@@ -149,6 +149,7 @@ declare -A repos=(
     ["https://github.com/bunnylushington/dot-emacs-v29.git"]="bunnylushington"
     ["https://github.com/gopar/.emacs.d.git"]="gopar"
     ["https://gitlab.com/Clsmith1/dotfiles.git"]="clsmith1"
+    ["https://github.com/yantar92/emacs-config.git"]="yantar92"
 )
 
 mkdir -p ~/development/emacsRefCfgs
