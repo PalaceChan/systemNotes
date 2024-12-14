@@ -266,6 +266,12 @@ reboot # remove the usb now
 sudo pacman -S alsa-utils bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox openssh obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
 #+end_src
 
+for fonts, fc-list should have very few by default, fc-match Monospace might match something like FreeMono.otf. install noto to instead fc-match NotoSansMono-Regular.ttf
+#+begin_src bash
+sudo pacman -S noto-fonts
+fc-match Monospace
+#+end_src
+
 bootstrap some home dirs and content (like dotfiles)
 #+begin_src bash
 mkdir development docs history rabbit; cd development
