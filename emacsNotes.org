@@ -150,6 +150,8 @@ declare -A repos=(
     ["https://github.com/gopar/.emacs.d.git"]="gopar"
     ["https://gitlab.com/Clsmith1/dotfiles.git"]="clsmith1"
     ["https://github.com/yantar92/emacs-config.git"]="yantar92"
+    ["https://gitlab.com/taonaw/taonah.git"]="taonah"
+    ["https://github.com/xenodium/dotsies.git"]="xenodium"
 )
 
 mkdir -p ~/development/emacsRefCfgs
