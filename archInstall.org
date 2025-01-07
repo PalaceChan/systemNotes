@@ -369,7 +369,7 @@ Useful packages to have on any system
 | ghostscript      | pdf manip                                | ~sudo pacman -S ghostscript~                                                                  |
 | pdftk            | pdf manip                                | ~sudo pacman -S pdftk~                                                                        |
 | libvterm         | for vterm in emacs                       | ~sudo pacman -S libvterm~                                                                     |
-| texlive-most     | covers needs for tex                     | ~sudo pacman -S texlive-most~                                                                 |
+| texlive          | covers needs for tex                     | ~sudo pacman -S texlive~                                                                      |
 | qpdf             | encrypt/decrypt pdfs                     | ~sudo pacman -S qpdf~                                                                         |
 | xournalpp        | annotate pdfs (e.g. to sign them)        | ~sudo pacman -S xournalpp~                                                                    |
 
