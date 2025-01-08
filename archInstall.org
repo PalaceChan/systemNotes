@@ -388,6 +388,8 @@ for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (
 ** If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
 ** to ssh/scp stuff across two of these
 #+begin_src bash
+ssh-keygen -C "$(whoami)@$(uname -n)-$(date -I)" # if you need to make an ssh key
+
 systemctl start sshd
 ip -br a # see ip addr this way the 192.*
 # ssh username@<the ip> from other computer
