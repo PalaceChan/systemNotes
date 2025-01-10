@@ -318,6 +318,17 @@ control behaviors in =/etc/systemd/logind.conf= then bounce the daemon ~sudo sys
 | [[https://youtu.be/FxeriGuJKTM?si=8GxoOvjYR0ia7E6K][Learn Linux TV]]                              |                                                                                     |
 | [[https://youtu.be/Xek3TGKzLWw?si=TefLOYmPpHIoY1AH][setup hibernation short youtube clip]]        | (forgets to add resume to the hooks in mkinitcpio.conf between filesystms and fsck) |
 | [[https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate][arch wiki on power management]]               |                                                                                     |
+* battery optimization
+set charge threshold for health, for thinkpad laptop:
+#+begin_src bash
+sudo pacman -S tlp
+sudo systemctl enable tlp
+sudo systemctl start tlp
+# then in /etc/tlp.conf set the START_CHARGE_THRESH_BAT0 and STOP_CHARGE_THRESH_BAT0 (60 and 70 e.g.), then:
+sudo tlp start
+# run this to see details of current state and battery stats:
+sudo tlp-stat -b
+#+end_src
 * openbox
 #+BEGIN_SRC bash
 sudo pacman -S openbox obconf
