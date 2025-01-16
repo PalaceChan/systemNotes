@@ -414,6 +414,35 @@ use xournal++ (package xournalpp) to open it, can use text box or draw. Then exp
 To decrypt a pdf: ~qpdf --password='pwd' --decrypt input.pdf output.pdf~
 To encrypt a pdf: ~qpdf --encrypt 'pwd' 'pwd' 256 -- input.pdf output.pdf~
 (the first password is to open, the second is to allow modifying/printing/annotating/extracting content)
+** vc tracking home dir locally
+in development
+#+begin_src bash
+mkdir home && git init --separate-git-dir home $HOME
+#+end_src
+
+then in home dir add appropriate .gitignore, something like
+#+begin_example
+,*
+!.gitignore
+!.bashrc
+!.bash_profile
+!.authinfo
+!.Rprofile
+!.xinitrc
+!.Xmodmap
+!.Xresources
+!.tmux.conf
+!.emacs.d/
+!.emacs.d/init.el
+!.emacs.d/early-init.el
+!.emacs.d/config.org
+!.emacs.d/eww-bookmarks
+!.emacs.d/elpa/
+!.emacs.d/elpa/**
+.emacs.d/elpa/**/*.elc
+.emacs.d/elpa/**/*.png
+.emacs.d/elpa/**/*.pdf
+#+end_example
 * updating mirrors
 from https://wiki.archlinux.org/title/mirrors
 go to https://archlinux.org/mirrorlist/ to get a new list and replace below (=/sudo::/path/to/file= for tramp)
