@@ -432,6 +432,7 @@ then in home dir add appropriate .gitignore, something like
 !.Xmodmap
 !.Xresources
 !.tmux.conf
+!.gitignore_global
 !.emacs.d/
 !.emacs.d/init.el
 !.emacs.d/early-init.el
