@@ -439,6 +439,7 @@ then in home dir add appropriate .gitignore, something like
 !.emacs.d/early-init.el
 !.emacs.d/config.org
 !.emacs.d/eww-bookmarks
+!.emacs.d/custom.el
 !.emacs.d/elpa/
 !.emacs.d/elpa/**
 .emacs.d/elpa/**/*.elc
