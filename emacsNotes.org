@@ -199,6 +199,8 @@ to byte recompile an individual package (the t is to force)
 #+begin_src emacs-lisp
 (byte-recompile-directory (expand-file-name "gptel-20240905.1946" package-user-dir) 0 t)
 #+end_src
+** elpy rpc errors
+if you see =error in process sentinel: elpy-rpc--default-error-callback= type of errors just run ~M-x elpy-rpc-reinstall-virtualenv~
 ** some fixes for mid may 2023 update
 to fix the org error message: https://emacs.stackexchange.com/questions/70081/how-to-deal-with-this-message-important-please-install-org-from-gnu-elpa-as-o
 the answer with 4 steps worked
