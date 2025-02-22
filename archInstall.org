@@ -322,10 +322,10 @@ control behaviors in =/etc/systemd/logind.conf= then bounce the daemon ~sudo sys
 set charge threshold for health, for thinkpad laptop:
 #+begin_src bash
 sudo pacman -S tlp
-sudo systemctl enable tlp
+sudo systemctl enable tlp # systemctl is-enabled tlp to check if have enabled before and systemctl status tlp also useful
 sudo systemctl start tlp
 # then in /etc/tlp.conf set the START_CHARGE_THRESH_BAT0 and STOP_CHARGE_THRESH_BAT0 (60 and 70 e.g.), then:
-sudo tlp start
+sudo systemctl restart tlp
 # run this to see details of current state and battery stats:
 sudo tlp-stat -b
 #+end_src
