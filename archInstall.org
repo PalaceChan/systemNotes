@@ -3,6 +3,7 @@
 * create iso image
 download an iso like this
 #+begin_src bash
+mkdir arch-iso-20241101
 rsync -av rsync://mirror.adectra.com/archlinux/iso/2024.11.01/ ./arch-iso-20241101/
 #+end_src
 then cat it into the usb drive (lsblk or fdisk -lu to find which device it is)
@@ -490,6 +491,13 @@ mount --bind /sys /mnt/sys
 
 mount -t efivarfs efivarfs /mnt/sys/firmware/efi/efivars # to use grub-install and such
 
+# before chroot you want to have wifi already so do these
+iwctl
+station wlan0 scan
+station wlan0 get-networks
+station wlan0 connect your_ssid
+exit # then confirm with a ping
+
 #chroot /mnt /bin/bash # otherwise zsh default but should use arch-chroot anyways
 arch-chroot /mnt
 #+end_src
@@ -500,6 +508,38 @@ exit
 umount -R /mnt
 shutdown now
 #+end_src
+
+in the case of an older setup like on the x220 with just sda1 partition, i still ran up to the first mount ~/dev/vg0/lv_root /mnt~ but then in the next block of commands i only did
+#+begin_src bash
+mount /dev/vg0/lv_home /mnt/home
+#+end_src
+
+the rest is the same but i skipped the efivarfs bit as not a uefi setup (~ls /sys/firmware/efi~ was empty)
+** 20250506 upgrade rescue
+on old x220 laptop, pacman Syu was mid-upgrading when laptop hung and had to power it off. Followed the chroot instructions to finish running pacman Syu but i had to first do
+#+begin_src bash
+rm /var/lib/pacman/db.lck
+#+end_src
+when it complained it could not lock the database, and then
+#+begin_src bash
+pacman -Syu --overwrite '*'
+#+end_src
+when it complained that files existed already on system and no packages were upgraded. Then it booted but once i tried to log in exec startx was failing so i had to go back to chroot and use this to comment out those lines
+#+begin_src bash
+sed -i '11,13 s/^/#/' .bash_profile
+#+end_src
+
+once there startx was crashing due to a bunch of corrupt shared objects, e.g.
+#+begin_src bash
+ldconfig # shows a lot of truncated so in /usr/lib
+#+end_src
+i could heal one like this:
+#+begin_src bash
+pacman -Qo /usr/lib/libgs.so # find out owned by ghostscript
+sudo pacman -Sw ghostscript # redownload ghostscript
+sudo pacman -U --noconfirm --overwrite '*' /var/cache/pacman/pkg/ghostscript-10.04.0-1-x86_64.pkg.tar.zst # reinstall it
+#+end_src
+so i repeated that for the rest of them. Eventually was left with only "empty file" libm17n* shared objects, i deleted them. Then emacs wouldnt start so i did the above (-Sw followed by -U) for the m17n-db and m17n-lib packages and then both emacs and startx were all healed
 ** 20241110 upgrade rescue
 ran
 #+begin_src bash
