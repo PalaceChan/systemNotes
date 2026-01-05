@@ -355,6 +355,25 @@ if there is annoying beep, alsamixer might have a beep channel, mute it with =M=
 
 do ~lspci | grep -i audio~ to see soundcard, can also consult arch wiki for lenovo models [[https://wiki.archlinux.org/title/Category:Lenovo][here]] and one may need alsa-mixer fimrware (package sof-firmware)
 then also ~aplay -l~ will show soundcards. installing sof-firmware rebuilds mkinitcpio so you have to reboot (this usually resolves headphones, but not laptop speakers)
+* setting up vpn
+youtube source: https://www.youtube.com/watch?v=O-wIUZaywBc
+
+install this package:
+#+begin_src bash
+sudo pacman -S networkmanager-openvpn
+#+end_src
+
+go to https://www.vpnbook.com/ to get a username and pwd and to download a package bundle. Unzip it.
+
+you also want these for gui setup
+#+begin_src bash
+sudo pacman -S nm-connection-editor network-manager-applet
+#+end_src
+
+then you run ~nm-connection-editor &~ and hit the + then import vpn from file to import the ovpn file (the tcp one) along with the username and pwd from the website
+
+afterwards it should show up when you run ~nmcli connection show~ (for example, vpnbook-us16-tcp80) and you can turn it on via ~nmcli connection up vpnbook-us16-tcp80~ and off via ~nmcli connection down vpnbook-us16-tcp80~
+just check on https://whatismyipaddress.com/ and it should be working
 * miscellaneous packages
 Useful packages to have on any system
 |------------------+------------------------------------------+---------------------------------------------------------------------------------------------|
