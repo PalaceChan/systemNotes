@@ -423,12 +423,12 @@ ssh-keygen -C "$(whoami)@$(uname -n)-$(date -I)" # if you need to make an ssh ke
 
 systemctl start sshd
 ip -br a # see ip addr this way the 192.*
-# ssh username@<the ip> from other computer
+# ssh username@<the ip> from other computer or rsync -abviuzPc docs/ avelazqu@<the ip>:docs/
 systemctl stop sshd # when done
 #+end_src
 
 for a smart merge using rsync see https://superuser.com/questions/547282/which-is-the-rsync-command-to-smartly-merge-two-folders
-so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =-n= to sanity check and remove =-b= if want no backups created)
+so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =-n= to sanity check and remove =-b= if want no backups created and =--delete= to delete stuff in dest not present in src)
 ** annotating a pdf, unencrypting and decrypting
 use xournal++ (package xournalpp) to open it, can use text box or draw. Then export it as pdf.
 To decrypt a pdf: ~qpdf --password='pwd' --decrypt input.pdf output.pdf~
