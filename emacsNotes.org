@@ -152,6 +152,17 @@ declare -A repos=(
     ["https://github.com/yantar92/emacs-config.git"]="yantar92"
     ["https://gitlab.com/taonaw/taonah.git"]="taonah"
     ["https://github.com/xenodium/dotsies.git"]="xenodium"
+    ["https://github.com/junghan8611/doomemacs-config.git"]="junghan8611-doom"
+    ["https://github.com/ericdallo/dotfiles.git"]="ericdallo-dotfiles"
+    ["https://github.com/doomemacs/doomemacs.git"]="doomemacs"
+    ["https://github.com/hlissner/doom.d.git"]="hlissner-doom-private"
+    ["https://github.com/syl20bnr/spacemacs.git"]="spacemacs"
+    ["https://github.com/seagle0128/.emacs.d.git"]="centaur-emacs"
+    ["https://github.com/jamescherti/minimal-emacs.d.git"]="minimal-emacs.d"
+    ["https://github.com/ashton314/emacs-bedrock.git"]="emacs-bedrock"
+    ["https://github.com/MiniApollo/kickstart.emacs.git"]="kickstart.emacs"
+    ["https://github.com/caisah/emacs.dz.git"]="emacs.dz"
+    ["https://github.com/emacs-tw/awesome-emacs.git"]="awesome-emacs"
 )
 
 mkdir -p ~/development/emacsRefCfgs
@@ -169,7 +180,7 @@ popd
 
 #+begin_src bash
 bash ~/scripts/emacs_clones.sh
-(cd ~/development/emacsRefCfgs && for d in *; do pushd $d ; git reset --hard HEAD; git pull --rebase --autostash; popd; done)
+(cd ~/development/emacsRefCfgs; for d in */; do pushd "$d" >/dev/null; git reset --hard HEAD; git clean -fdx; git pull --rebase --autostash; popd >/dev/null; done)
 (cd ~/development/emacsRefCfgs && for d in *; do cd $d; echo "UPDATES FOR $d"; git --no-pager log --pretty=format:"%h%x09%an%x09%ad%x09%s" --since="2 weeks ago" --no-merges -10; cd -; done)
 #+end_src
 * misc
