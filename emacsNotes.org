@@ -1,22 +1,22 @@
-* compiling native comp branch of emacs from source
-** First download the code (could git clone or src tarball from https://git.savannah.gnu.org/cgit/emacs.git/?h=feature/native-comp)
-** in that directory run autogen.sh
+* building emacs from source
+** First download the code (could git clone https://git.savannah.gnu.org/git/emacs.git or use a release tarball)
+** in that directory run autogen.sh if it is a git checkout
 ** Then run a command like this:
 #+begin_src bash
-./configure PKG_CONFIG_PATH='/path/to/individual/pkgconfig:/path/to/another/pkgconfig' CPPFLAGS='-I/path/to/pkg/include' LDFLAGS='-O3 -L/path/to/package/lib' CFLAGS='-O3 -march=native' --prefix /path/to/install_dir --with-gif=ifavailable --with-tiff=ifavailable --with-gnutls=yes --with-json=yes --with-nativecomp=yes --with-mailutils --with-dbus=yes --with-x-toolkit=lucid
+./configure PKG_CONFIG_PATH='/path/to/individual/pkgconfig:/path/to/another/pkgconfig' CPPFLAGS='-I/path/to/pkg/include' LDFLAGS='-O2 -L/path/to/package/lib' CFLAGS='-O2 -march=native' --prefix=/path/to/install_dir --with-cairo --with-harfbuzz --with-modules --with-native-compilation=aot --with-tree-sitter --with-x-toolkit=gtk3
 #+end_src
-followed by ==make -j8== and ==make install==
-** Then commands like these can be helpful to force native compilation and regular byte compilation of stuff
+followed by ~make -j$(nproc)~ and ~make install~
+** Then commands like these can be helpful to recompile installed packages and kick off native compilation
 #+begin_src emacs-lisp
-byte-recompile-directory
-native-compile-async
+(package-recompile-all)
+(native-compile-async package-user-dir t)
 #+end_src
 * dir-locals
 use =((nil . ((buffer-read-only . t))))= per this [[https://emacs.stackexchange.com/questions/38607/how-to-open-all-files-from-specific-path-as-read-only-buffer][stack exchange]] to open in read-only for reference sub-directories
 * custom info manuals
 per this [[https://blog.nawaz.org/posts/2023/Mar/creating-info-manuals-and-adding-them-into-emacs/][blogpost]] from this [[https://www.reddit.com/r/emacs/comments/11wn6nx/creating_info_manuals_and_adding_them_into_emacs/][reddit post]] the snippet ~(add-to-list 'Info-additional-directory-list "/path/to/your/texinfo")~
 can go along with ~use-package info~ to point to a custom ~make texinfo~ manual from something using sphinx documentation
-remember after the =.info= file gets created to add a file called =dir= which can be copied from one of the emacs packages with an info manual like =magit=
+rather than copying a stale =dir= file from some package, just update it with ~install-info~ after the =.info= file gets created
 
 #+caption: python standard library demo
 #+begin_src bash
@@ -28,7 +28,7 @@ make texinfo
 (cd build/texinfo && make)
 mkdir -p ~/.texinfo/python
 rsync -avz build/texinfo/* ~/.texinfo/python/
-cp ~/.emacs.d/elpa/magit-20230215.1054/dir ~/.texinfo/python/ # and rename it
+install-info --dir-file="$HOME/.texinfo/python/dir" "$HOME/.texinfo/python/<manual>.info" # replace <manual>.info with the top-level info file that got built
 #+end_src
 * org settings for a good research notebook
 #+begin_example
@@ -40,7 +40,7 @@ cp ~/.emacs.d/elpa/magit-20230215.1054/dir ~/.texinfo/python/ # and rename it
 ,#+OPTIONS: num:nil
 ,#+OPTIONS: ^:nil
 ,#+OPTIONS: toc:nil
-,#+OPTIONS: tex:imagemagick
+,#+OPTIONS: tex:dvisvgm
 ,#+EXCLUDE_TAGS: noexport
 ,#+EXPORT_FILE_NAME: README.md
 :END:
@@ -160,64 +160,47 @@ bash ~/scripts/emacs_clones.sh
 (cd ~/development/emacsRefCfgs && for d in *; do cd $d; echo "UPDATES FOR $d"; git --no-pager log --pretty=format:"%h%x09%an%x09%ad%x09%s" --since="2 weeks ago" --no-merges -10; cd -; done)
 #+end_src
 * misc
-** how arch builds emacs
-system-configuration-options variable, arch one is:
-"--prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib --localstatedir=/var --with-x-toolkit=gtk3 --with-xft --with-wide-int --with-modules --with-cairo --with-harfbuzz 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt' CPPFLAGS=-D_FORTIFY_SOURCE=2 LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
 ** random tips
 ~M-x apropos-user-option~ then a package name to see all the configurable variables
 * upgrading
-** upgrading to emacs 29
-first back things up ~cp -r ~~/.emacs.d ~~/.emacs.d.backup28To29~
+** upgrading to emacs 29 (historical)
+first back things up ~cp -r ~/.emacs.d ~/.emacs.d.backup28To29~
 then upgrade ~sudo pacman -S emacs~
 
 made the legacy tree-sitter configuration inactive and flipped on built-in along with treesit-auto in [[https://github.com/PalaceChan/Configuration/commit/9a6bdae6eecd210f08a9a2a60cb26c164a9bc016][this commit]]
 and other minor addenda in [[https://github.com/PalaceChan/Configuration/commit/d9dca75476ec6fe8f89e5efdf72944dbd82c891e][here]] and [[https://github.com/PalaceChan/Configuration/commit/a2c8d42d17d4c06143caf316065b13424456d2c7][here]]
 * troubleshooting
 ** general
-byte recompiling everything refs:
-https://emacs.stackexchange.com/questions/72655/after-updating-my-packages-two-packages-are-not-working-anymore-how-to-solve-t)
-https://stackoverflow.com/questions/24725778/how-to-rebuild-elpa-packages-after-upgrade-of-emacs
+recompiling packages refs:
+https://emacs.stackexchange.com/questions/72655/
+https://stackoverflow.com/questions/24725778/
 
 #+begin_src emacs-lisp
-(byte-recompile-directory package-user-dir nil 'force)
+(package-recompile-all)
 #+end_src
 
-to byte recompile an individual package (the t is to force)
+if i want to byte recompile an individual package (the t is to force)
 #+begin_src emacs-lisp
 (byte-recompile-directory (expand-file-name "gptel-20240905.1946" package-user-dir) 0 t)
 #+end_src
+
+and if i want to kick off native compilation across installed packages
+#+begin_src emacs-lisp
+(native-compile-async package-user-dir t)
+#+end_src
 ** elpy rpc errors
 if you see =error in process sentinel: elpy-rpc--default-error-callback= type of errors just run ~M-x elpy-rpc-reinstall-virtualenv~
-** some fixes for mid may 2023 update
-to fix the org error message: https://emacs.stackexchange.com/questions/70081/how-to-deal-with-this-message-important-please-install-org-from-gnu-elpa-as-o
+** historical fixes
+*** mid may 2023 update
+to fix the org error message: https://emacs.stackexchange.com/questions/70081/
 the answer with 4 steps worked
 
 for doom-modeline just wait for this commit to get to melpa: https://github.com/seagle0128/doom-modeline/commit/9d6a39f97055b6b92ea2c51decb9547bad5106dc
 or add the quote yourself after it updates
-
-then for orgit error with emacsql can delete emacsql old package and reinstall a fresh one as well as do the same for closql
-after that is done you may get this warning but all should be ok at least (it will build it) - but also very easy to just install sqlite3 package (likely libsqlite3 already installed ~pacman -Ss libsqlite3~)
-
-#+begin_quote
-Warning (emacsql): Since your Emacs does not come with
-built-in SQLite support [1], but does support C modules, the best
-EmacSQL backend is provided by the third-party `sqlite3' package
-[2].
-
-Please install the `sqlite3' Elisp package using your preferred
-Emacs package manager, and install the SQLite shared library
-using your distribution's package manager.  That package should
-be named something like `libsqlite3' [3] and NOT just `sqlite3'.
-
-In the current Emacs instance the legacy backend is used, which
-uses a custom SQLite executable.  Using an external process like
-that is less reliable and less performant, and in a few releases
-support for that might be removed.
-#+end_quote
-** failed to verify signature archive-contents when refreshing package list
+*** failed to verify signature archive-contents when refreshing package list
 solution: https://stackoverflow.com/a/78553384
 tldr: ~(setq package-check-signature nil)~ then ~M-x package-refresh-contents~ and install latest =gnu-elpa-keyring-update=
-** after updating gptel to 20240905.1946
+*** after updating gptel to 20240905.1946
 was hitting transient issues, i applied [[https://github.com/karthink/gptel/pull/361/commits/c820c0cb85b59cf663d5da0acb997789e2c7c2a0][this suggestion]] and byte recompiled gptel to work around for now. The real solution should arrive via transient as per [[https://github.com/karthink/gptel/issues/348][this thread]]
-** new setup bootstrapped 20241207 on t14g5 laptop
+*** new setup bootstrapped 20241207 on t14g5 laptop
 a couple of packages didnt install correctly (no autoloads.el generated), had to rm -rf them and then install them from package menu again
