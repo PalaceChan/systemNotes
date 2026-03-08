@@ -15,6 +15,6 @@ void foo() {
 
 another trick uses these pairs
 #+begin_src C
-void __attribute__((noinline)) enter() { volatile asm(""); }
-void __attribute__((noinline)) leave() { volatile asm(""); }
+void __attribute__((noinline)) enter() { asm volatile(""); }
+void __attribute__((noinline)) leave() { asm volatile(""); }
 #+end_src

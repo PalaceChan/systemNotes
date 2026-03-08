@@ -2,5 +2,5 @@
 use this to install some basics
 
 #+begin_src bash
-pip3 install --user pandas
+python -m pip install --user pandas
 #+end_src

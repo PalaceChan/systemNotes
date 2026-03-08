@@ -12,5 +12,5 @@ now can start to install packages by running
 
 #+begin_src R
   install.packages(c("lazyeval","abind","data.table","scales","digest","bit","bit64","hash","lubridate","nanotime","ggplot2","magrittr","purrr"))
-  update.packages(lib.loc = "~/rlibs", oldPkgs = 'data.table')
+  update.packages(lib.loc = Sys.getenv("R_LIBS_USER"), oldPkgs = "data.table")
 #+end_src
