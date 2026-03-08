@@ -1,15 +1,28 @@
 * reference guides on youtube
 +https://www.youtube.com/watch?v=DPLnBPM4DhI "Arch Linux: Full Installation Guide - A complete tutorial/walthrough in one video!"+ (dead but channel is Learn Linux TV)
+* read this first
+for a fresh new machine the section i actually want to follow is =current recommended install without lvm2 but with luks (Dec 2024)= below.
+the older =legacy install with lvm2 (Jul 2019)= path is mostly here for historical context / recovery on old boxes and should not be my default recipe.
+
+before starting on a new machine:
+- verify the iso checksum/signature before writing it to usb
+- decide intel vs amd microcode package
+- decide whether secure boot is disabled (these notes assume the usual unsigned grub path)
+- write down disk device, hostname, username, timezone
+- before reboot sanity check ~lsblk -f~, =/etc/fstab=, and ~efibootmgr -v~
+
 * create iso image
 download an iso like this
 #+begin_src bash
 mkdir arch-iso-20241101
 rsync -av rsync://mirror.adectra.com/archlinux/iso/2024.11.01/ ./arch-iso-20241101/
 #+end_src
-then cat it into the usb drive (lsblk or fdisk -lu to find which device it is)
+before writing it i want to verify the checksum/signature from that same release directory.
+
+then cat it into the usb drive (triple check the target first with ~lsblk~ or ~fdisk -lu~; i do not want to guess here)
 #+BEGIN_SRC bash
 sudo -i
-cat /path/to/the.iso > /dev/sdb # usually it is /dev/sdb as main disk is sda
+cat /path/to/the.iso > /dev/sdX # replace sdX only after confirming it is the usb device
 sync
 exit
 #+END_SRC
@@ -19,10 +32,11 @@ sudo wipefs --all /dev/sdx
 sudo fdisk /dev/sdx #followed by g, n, <RET> to make single partition and w to commit
 sudo mkfs.ext4 /dev/sdx1 #to put a fresh file system into the partition made above
 #+END_SRC
-* original install with lvm2 (Jul 2019)
+* legacy install with lvm2 (Jul 2019)
+mostly here for older boxes / historical reference. for a fresh machine i want the =current recommended install without lvm2 but with luks (Dec 2024)= section below.
 ** boot into image, get internet, set time, partition
 need to verify in UEFI mode by checking for presence of ~file /sys/firmware/efi/efivars~
-next internet run ~wifi-menu~ and check with ~ip a~ or ~ping -c 2 www.google.com~
+next internet use ~iwctl~ (rather than the old ~wifi-menu~) and check with ~ip a~ or ~ping -c 2 archlinux.org~
 if that is fine next steps are a quick time set
 #+BEGIN_SRC bash
 timedatectl status #to check
@@ -30,7 +44,7 @@ timedatectl set-ntp true
 #+END_SRC
 next
 #+BEGIN_SRC bash
-pacman -Syyy #sync latest
+pacman -Sy #sync latest
 fdisk /dev/sdx #your disk - type g for a new GPT partition table
 #+END_SRC
 make an EFI partition about 500MB, a boot about 500MB and last partition fill it up and type ~t~
@@ -40,10 +54,10 @@ then first two filesystems:
 mkfs.fat -F32 /dev/sdx1 #EFI
 mkfs.ext4 /dev/sdx2 #Boot
 #+END_SRC
-for the last one try ~modprobe dm_mod~ to see =/dev/mapper= if not just make the volumes with /dev/sdx3 directly like
+for the last one make the volumes with /dev/sdx3 directly like
 #+BEGIN_SRC bash
-pvcreate --dataalignment 1m /dev/mapper/lvm #or /dev/sdx3
-vgcreate vg0 /dev/mapper/lvm #or /dev/sdx3
+pvcreate --dataalignment 1m /dev/sdx3
+vgcreate vg0 /dev/sdx3
 lvcreate -L 30GB vg0 -n lv_root
 lvcreate -L 500GB vg0 -n lv_home
 modprobe dm_mod
@@ -55,15 +69,16 @@ next make file systems and mount everything:
 mkfs.ext4 /dev/vg0/lv_root
 mkfs.ext4 /dev/vg0/lv_home
 mount /dev/vg0/lv_root /mnt
-mkdir /mnt/boot /mnt/home /mnt/etc
+mkdir /mnt/boot /mnt/home /mnt/etc /mnt/efi
 mount /dev/sdx2 /mnt/boot
+mount /dev/sdx1 /mnt/efi
 mount /dev/vg0/lv_home /mnt/home
 #+END_SRC
 
 with everything mounted make the =fstab= file and strap on:
 #+BEGIN_SRC bash
 genfstab -U -p /mnt >> /mnt/etc/fstab
-pacstrap -i /mnt base
+pacstrap -K /mnt base linux linux-firmware lvm2
 arch-chroot /mnt
 #+END_SRC
 ** initial setup now in your ssd
@@ -81,21 +96,20 @@ and then editing =/etc/hosts= to contain
 #+END_EXAMPLE
 some packages to install
 #+BEGIN_SRC bash
-pacman -S base-devel grub efibootmgr dosfstools mtools linux-headers networkmanager wpa_supplicant wireless_tools emacs
+pacman -S base-devel grub efibootmgr dosfstools mtools linux linux-headers linux-firmware lvm2 networkmanager wpa_supplicant emacs sudo man-db man-pages
 systemctl enable NetworkManager
 #+END_SRC
 now edit ~/etc/mkinitcpio.conf~ and in =HOOKS= between =block= and =filesystems= add =lvm2= entry
 and then one can run
 #+BEGIN_SRC bash
-mkinitcpio -p linux
+mkinitcpio -P
 #+END_SRC
 generate locale by uncommenting =en_US.UTF-8= in =/etc/locale.gen= and running ~locale-gen~
 set the root passwd ~passwd~ add your user ~useradd -m -g users -G wheel bla~ and ~passwd bla~
-if sudo not installed, install it (can check with ~pacman -Q sudo~) and allow wheel group by running
-~EDITOR='emacs -nw' visudo~ and uncommenting =%wheel ALL=(ALL) ALL=
+allow wheel group by running ~EDITOR='emacs -nw' visudo~ and uncommenting =%wheel ALL=(ALL) ALL=
 next ready grub like so
 #+BEGIN_SRC bash
-grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+grub-install --efi-directory=/efi --boot-directory=/boot --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo #might have to mkdir the destination
 grub-mkconfig -o /boot/grub/grub.cfg
 #+END_SRC
@@ -110,18 +124,15 @@ echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
 #+END_SRC
 ready to go at this point so ~exit; umount -R /mnt; reboot~
 ** upon boot
-verify everything works then recommend ~reboot~ and in grub menu type =e= to edit the kernel params
-and add ~mitigations=off~ to avoid having poor performance for stupid reasons. after booting
-check via ~cat /proc/cmdline~ and ~lscpu~ and make it persistent via ~/etc/default/grub~ adding it to
-the =GRUB_CMDLINE_LINUX_DEFAULT= line.
+verify everything works. if i am benchmarking and intentionally trading off security, i can temporarily add ~mitigations=off~ from the grub menu with =e=, check it via ~cat /proc/cmdline~, and only make it persistent later if i really mean to. i do not want that as a default on a fresh install.
 next install quite a few more useful packages
 #+BEGIN_SRC bash
   sudo pacman -S r gcc-fortran openblas turbostat xorg-server xorg-xinit xorg-xprop xorg-xset rxvt-unicode dmenu
   sudo pacman -S tree ripgrep the_silver_searcher parallel alsa-utils wget
-  sudo pacman -S firefox pulseaudio xorg-xrandr xorg-wininfo xorg-xprop xorg-xdpyinfo xdpyinfo
-  sudo pacman -S pavucontrol bc gdb htop paccache pacman-contrib
+  sudo pacman -S firefox xorg-xrandr xorg-xwininfo xorg-xprop xorg-xdpyinfo xdpyinfo
+  sudo pacman -S pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol bc gdb htop pacman-contrib
 
-  sudo pacman -S base-devel inetutils cmake tk man rsync #inetutils for hostname and tk for R menu
+  sudo pacman -S base-devel inetutils cmake tk man-db man-pages rsync #inetutils for hostname and tk for R menu
   sudo pacman -S bind #dnsutils like host and nslookup
 #+END_SRC
 if old laptop also grab =linux-firmware=
@@ -131,30 +142,33 @@ get sensors to be able to monitor system
 sudo pacman -S lm_sensors
 sudo sensors-detect
 #+END_SRC
-install nvidia requirements and reboot/upgrade system until able to detect card
+install nvidia requirements if actually needed; often the packages alone are enough and ~nvidia-xconfig~ is a last resort
 #+BEGIN_SRC bash
 sudo pacman -S nvidia nvidia-utils nvidia-settings
-sudo nvidia-xconfig #once installed
-sudo mv /etc/X11/xorg.conf /etc/X11/xorg.confg.d/20-nvidia.conf
+# if i really need a generated xorg file:
+# sudo nvidia-xconfig
+# sudo mv /etc/X11/xorg.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 #+END_SRC
 use sudo ~nvidia-settings~ for future monitor additions and updates to displays
 edit =/etc/makepkg.conf= (in particular MAKEFLAGS -j) to match server capacity
 
-set up a global gitignore (and github auth)
+set up a global gitignore (for github auth prefer ssh keys or ~gh auth login~, not a plaintext token in gitconfig)
 #+begin_src bash
   git config --global core.excludesFile ~/.gitignore
-  git config --global --add github.user <user>
-  git config --global --add github.oauth-token <token>
 #+end_src
-* install without lvm2 but with luks (Dec 2024)
+* current recommended install without lvm2 but with luks (Dec 2024)
+this is the main path i want to follow on a fresh machine.
 ** boot and ensure uefi/wifi
 boot into iso, verify =/sys/firmware/efi/fw_platform_size=  (must exist, likely contain value 64) then =iwctl= to connect to wifi
+these notes assume secure boot is disabled; if i want to keep secure boot i need a signed boot path rather than assuming plain grub will boot.
+if i am using a non-US keyboard and encrypted root, remember that the LUKS passphrase later has to survive the early boot keyboard layout too.
 #+begin_src bash
 iwctl # will enter a shell, do 'station list', then something like 'station wlan0 get-networks'
 iwctl --passphrase <XXX> station wlan0 connect <WIFI-NETWORK-NAME>
 
 ip a # check you have ip addr
 ping archlinux.org # ping check
+timedatectl set-ntp true
 #+end_src
 
 ** partition and format disks
@@ -183,14 +197,15 @@ mount --mkdir /dev/nvme0n1p2 /mnt/boot
 uncomment line that says ParallelDownloads via ~nano /etc/pacman.conf~
 =/etc/pacman.d/mirrorlist= carries over from live env to installed system so get good mirrors
 #+begin_src bash
-pacman -Syy reflector
+pacman -S reflector
 reflector -c US -a 12 --sort rate --save /etc/pacman.d/mirrorlist
-pacman -Syy # refresh mirror list
+pacman -Syy # refresh mirror list after replacing it
 #+end_src
 
-install essential packages
+install essential packages (pick the microcode package for the cpu actually in the machine; below shows intel)
 #+begin_src bash
-pacstrap -K /mnt base base-devel emacs networkmanager cryptsetup grub efibootmgr linux linux-headers linux-firmware intel-ucode reflector
+pacstrap -K /mnt base base-devel emacs networkmanager cryptsetup grub efibootmgr linux linux-headers linux-firmware sudo reflector intel-ucode
+# on AMD swap intel-ucode for amd-ucode
 #+end_src
 
 ** fstab and chroot
@@ -241,16 +256,20 @@ regenerate ~mkinitcpio -P~
 grub-install --efi-directory=/efi --boot-directory=/boot --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 #+end_src
 
-because of encryption have to edit =/etc/default/grub=:
+because of encryption edit =/etc/default/grub= and set =GRUB_CMDLINE_LINUX= to something like
+#+begin_example
+cryptdevice=UUID=<UUID-OF-ENCRYPTED-PARTITION>:cryptroot root=/dev/mapper/cryptroot
+#+end_example
+get that UUID with
 #+begin_src bash
-blkid -o value -s UUID /dev/sda3 >> /etc/default/grub # A
-blkid -o value -s UUID /dev/mapper/cryptroot >> /etc/default/grub # B
+blkid -o value -s UUID /dev/nvme0n1p3 # replace with the actual encrypted partition if not nvme0n1p3
 #+end_src
-and add to =GRUB_CMDLINE_LINUX= an entry "cryptdevice=UUID=A:cryptroot root=UUID=B" (if A is the uuid of the encrypted partition, and B of the unencrypted cryptroot)
 
+then regenerate grub and sanity check the mounts / boot entries before reboot
 #+begin_src bash
 grub-mkconfig -o /boot/grub/grub.cfg
-
+lsblk -f
+cat /etc/fstab
 efibootmgr -v # to confirm the UEFI boot entries
 # /efi/EFI/grub_uefi should be there too
 #+end_src
@@ -261,10 +280,13 @@ exit
 umount -R /mnt
 reboot # remove the usb now
 #+end_src
-** install more packages
+** optional / personal packages after first boot
+not required to get the machine booted; these are the bits i usually want on one of my own machines.
 #+begin_src bash
 # likely first connect to wifi via nmtui
 sudo pacman -S alsa-utils bc clang cmake dmenu dosfstools efibootmgr firefox gcc-fortran gdb ghostscript git htop inetutils libvterm llvm lm_sensors lsof man-db man-pages mlocate mtools openbox openssh obconf pacman-contrib parallel pdftk python-black python-pip qpdf r ripgrep rsync rxvt-unicode strace texinfo the_silver_searcher tk tmux tree turbostat valgrind wget xorg-server xorg-xdpyinfo xorg-xinit xorg-xprop xorg-xrandr xorg-xset xournalpp
+sudo pacman -S pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol # normal desktop audio stack
+sudo systemctl enable --now fstrim.timer # for ssd/nvme
 #+end_src
 
 for fonts, fc-list should have very few by default, fc-match Monospace might match something like FreeMono.otf. install noto to instead fc-match NotoSansMono-Regular.ttf
@@ -283,12 +305,12 @@ git clone https://github.com/PalaceChan/scripts.git
 
 (cd ~/development/dotfiles && for f in .gitconfig .gitignore .Rprofile .tmux.conf .Xmodmap .xinitrc .Xresources .mc-lists.el .gdbinit .bash_profile .bashrc; do cp -v $f ~/; done)
 cp ~/development/dotfiles/dump_history.sh ~/history/
-# in .gitconfig copy over manually the oauth token (or rsync it over)
-# rsync over .authinfo for openai key (or get fresh from openai)
+# in .gitconfig copy over only the non-secret bits manually
+# restore secrets (ssh keys, authinfo, tokens) via a safer path rather than keeping plaintext creds in gitconfig
 #+end_src
 
 ** set up hibernation
-edit =/etc/mkinitcpio.conf= and add resume after filesystems (which should already be after encrypt) then regen ~mktinitcpio -P~
+edit =/etc/mkinitcpio.conf= and add =resume= after =encrypt= but before =filesystems=, then regen ~mkinitcpio -P~
 
 edit =/etc/default/grub= and append to =GRUB_CMDLINE_LINUX= "resume=UUID=B resume_offset=123456"
 
@@ -296,7 +318,7 @@ where the offset value comes from a command like and B is the uuid of the decryp
 #+begin_src bash
 filefrag -v /swapfile # physical_offset column first row
 #filefrag -v /swapfile | awk '$1=="0:" {print substr($4, 1, length($4)-2)}'
-# findmnt -no UUID -T <swap_file> can help confirm B
+# findmnt -no UUID -T /swapfile can help confirm B
 #+end_src
 
 then
@@ -317,9 +339,11 @@ control behaviors in =/etc/systemd/logind.conf= then bounce the daemon ~sudo sys
 | [[https://youtu.be/kXqk91R4RwU?si=36uooJGxfcU7KYn8][DenshiVideo, Arch Linux: An Encrypted Guide]] | (uses single boot partition)                                                        |
 | [[https://youtu.be/XNJ4oKla8B0?si=X0Gsz4Kr16_X8LDw][EF Linux Made Simple]]                  |                                                                                     |
 | [[https://youtu.be/FxeriGuJKTM?si=8GxoOvjYR0ia7E6K][Learn Linux TV]]                              |                                                                                     |
-| [[https://youtu.be/Xek3TGKzLWw?si=TefLOYmPpHIoY1AH][setup hibernation short youtube clip]]        | (forgets to add resume to the hooks in mkinitcpio.conf between filesystms and fsck) |
+| [[https://youtu.be/Xek3TGKzLWw?si=TefLOYmPpHIoY1AH][setup hibernation short youtube clip]]        | (forgets to add resume to the hooks in mkinitcpio.conf between filesystems and fsck) |
 | [[https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate][arch wiki on power management]]               |                                                                                     |
-* battery optimization
+* optional / personal extras after base install
+these are not required to get Arch installed; they are the extras i usually add on my own machines.
+** battery optimization
 set charge threshold for health, for thinkpad laptop:
 #+begin_src bash
 sudo pacman -S tlp
@@ -330,13 +354,13 @@ sudo systemctl restart tlp
 # run this to see details of current state and battery stats:
 sudo tlp-stat -b
 #+end_src
-* openbox
+** openbox
 #+BEGIN_SRC bash
 sudo pacman -S openbox obconf
 # mkdir p ~/.config && cp -r ~/development/dotfiles/.config/openbox ~/.config/ # if bootstrapping from github
 #+END_SRC
 then add exec openbox-session to bottom of xinitrc
-* lvm snapshots
+** lvm snapshots
 use a command like this to backup root filesystem regularly
 #+BEGIN_SRC bash
 sudo lvcreate -L 8GB -s -n root_snapshot_YYYYMMDD /dev/mapper/vg0-lv_root
@@ -347,15 +371,16 @@ to purge an old snapshot
 sudo lvremove /dev/vg0/root_snapshot_YYYYMMDD
 #+END_SRC
 you can check volume group stats (like free space) with ~sudo vgs~
-* multiple monitors
+** multiple monitors
 use ~xprop | grep CLASS~ command (package =xorg-xprop=) to click on windows and see their class names
-* audio
+** audio
+for a normal fresh install prefer PipeWire rather than PulseAudio; ~pipewire-pulse~ is the PulseAudio replacement, so you not want both installed. a good default set is ~pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol~ and ~pavucontrol~ still works fine there.
 run ~alsamixer~ to ensure channels are unmuted, run ~speaker-test~ to test
 if there is annoying beep, alsamixer might have a beep channel, mute it with =M=
 
-do ~lspci | grep -i audio~ to see soundcard, can also consult arch wiki for lenovo models [[https://wiki.archlinux.org/title/Category:Lenovo][here]] and one may need alsa-mixer fimrware (package sof-firmware)
-then also ~aplay -l~ will show soundcards. installing sof-firmware rebuilds mkinitcpio so you have to reboot (this usually resolves headphones, but not laptop speakers)
-* setting up vpn
+do ~lspci | grep -i audio~ to see soundcard, can also consult arch wiki for lenovo models [[https://wiki.archlinux.org/title/Category:Lenovo][here]] and one may need alsa firmware (package sof-firmware)
+then also ~aplay -l~ will show soundcards. if the user session audio stack seems dead, check ~systemctl --user status pipewire pipewire-pulse wireplumber~. installing sof-firmware rebuilds mkinitcpio so you have to reboot (this usually resolves headphones, but not laptop speakers)
+** setting up vpn
 youtube source: https://www.youtube.com/watch?v=O-wIUZaywBc
 
 install this package:
@@ -374,7 +399,7 @@ then you run ~nm-connection-editor &~ and hit the + then import vpn from file to
 
 afterwards it should show up when you run ~nmcli connection show~ (for example, vpnbook-us16-tcp80) and you can turn it on via ~nmcli connection up vpnbook-us16-tcp80~ and off via ~nmcli connection down vpnbook-us16-tcp80~
 just check on https://whatismyipaddress.com/ and it should be working
-* miscellaneous packages
+** miscellaneous packages
 Useful packages to have on any system
 |------------------+------------------------------------------+---------------------------------------------------------------------------------------------|
 | Package          | Notes                                    | Command                                                                                     |
@@ -405,7 +430,7 @@ Useful packages to have on any system
 | xournalpp        | annotate pdfs (e.g. to sign them)        | ~sudo pacman -S xournalpp~                                                                    |
 
 
-* external drive backups
+** external drive backups
 first time only need to make a partition on the external drive and then an ext4 fs.
 for the partition just do ~sudo fdisk~ on the device (e.g. /dev/sda) and ~g~ for GPT label
 then ~n~ for new partition (all defaults fine to use the whole thing) then ~w~ to save that
@@ -415,9 +440,9 @@ and it useable
 
 for backups get timeshift from AUR, run as sudo timeshift-gtk from commandline (it can auto mount external drive above)
 
-* lifetime notes
-** If ~timedatectl status~ shows NPT off (or clock looks off) just run ~timedatectl set-ntp true~
-** to ssh/scp stuff across two of these
+** lifetime notes
+*** If ~timedatectl status~ shows NTP off (or clock looks off) just run ~timedatectl set-ntp true~
+*** to ssh/scp stuff across two of these
 #+begin_src bash
 ssh-keygen -C "$(whoami)@$(uname -n)-$(date -I)" # if you need to make an ssh key
 
@@ -429,12 +454,12 @@ systemctl stop sshd # when done
 
 for a smart merge using rsync see https://superuser.com/questions/547282/which-is-the-rsync-command-to-smartly-merge-two-folders
 so basically ~rsync -abviuzPc src/ dest/~ (the =-c= flag uses checksums rather than timestamps when comparing =-n= to sanity check and remove =-b= if want no backups created and =--delete= to delete stuff in dest not present in src)
-** annotating a pdf, unencrypting and decrypting
+*** annotating a pdf, unencrypting and decrypting
 use xournal++ (package xournalpp) to open it, can use text box or draw. Then export it as pdf.
 To decrypt a pdf: ~qpdf --password='pwd' --decrypt input.pdf output.pdf~
 To encrypt a pdf: ~qpdf --encrypt 'pwd' 'pwd' 256 -- input.pdf output.pdf~
 (the first password is to open, the second is to allow modifying/printing/annotating/extracting content)
-** vc tracking home dir locally
+*** vc tracking home dir locally
 in development
 #+begin_src bash
 mkdir home && git init --separate-git-dir home $HOME
@@ -466,13 +491,15 @@ then in home dir add appropriate .gitignore, something like
 .emacs.d/elpa/**/*.png
 .emacs.d/elpa/**/*.pdf
 #+end_example
-* updating mirrors
+* maintenance / rescue
+routine maintenance plus the break-glass notes i have actually used.
+** updating mirrors
 from https://wiki.archlinux.org/title/mirrors
 go to https://archlinux.org/mirrorlist/ to get a new list and replace below (=/sudo::/path/to/file= for tramp)
 #+begin_src bash
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 #+end_src
-* updating arch
+** updating arch
 if invalid or corrupted packages upgrade keyring with ~sudo pacman -S archlinux-keyring~
 if root partition full error clear cache all except most recent version with ~sudo paccache -rk1~ reference: https://ostechnix.com/recommended-way-clean-package-cache-arch-linux/
 if a package conflicts and get asked to remove can check what deps on it via ~pacman -Qi pkggname~
@@ -482,13 +509,14 @@ steps are:
 - use ~sudo pacman -Syu --ignore emacs~ to upgrade
 - reboot
 - use ~sudo lvremove /dev/vg0/root_snapshot_20210117~ to remove the oldest snapshot
-* removing packages
+** removing packages
 [[https://wiki.archlinux.org/title/pacman#Removing_packages][wiki]]
 
 look for them with ~pacman -Q | grep~ and remove with their deps not required by others with ~sudo pacman -Rs pkgname~ (just ~pacman -Rs -p pkgname~ for dry-run)
 (can also query for orphan/not-needed packages with ~pacman -Qdt~)
-* troubleshooting
-** chrooting into lvm system
+** troubleshooting / break glass
+these are rescue notes from real incidents, not a normal install checklist.
+*** chrooting into lvm system
 a good reference link: https://gist.github.com/uglide/5f6f23903dac6b5f2567 but essentially
 #+begin_src bash
 vgscan # should show vg0 can also run pvscan
@@ -534,7 +562,8 @@ mount /dev/vg0/lv_home /mnt/home
 #+end_src
 
 the rest is the same but i skipped the efivarfs bit as not a uefi setup (~ls /sys/firmware/efi~ was empty)
-** 20250506 upgrade rescue
+*** 20250506 upgrade rescue
+the commands below were emergency-only after confirming pacman was genuinely wedged mid-upgrade.
 on old x220 laptop, pacman Syu was mid-upgrading when laptop hung and had to power it off. Followed the chroot instructions to finish running pacman Syu but i had to first do
 #+begin_src bash
 rm /var/lib/pacman/db.lck
@@ -559,7 +588,7 @@ sudo pacman -Sw ghostscript # redownload ghostscript
 sudo pacman -U --noconfirm --overwrite '*' /var/cache/pacman/pkg/ghostscript-10.04.0-1-x86_64.pkg.tar.zst # reinstall it
 #+end_src
 so i repeated that for the rest of them. Eventually was left with only "empty file" libm17n* shared objects, i deleted them. Then emacs wouldnt start so i did the above (-Sw followed by -U) for the m17n-db and m17n-lib packages and then both emacs and startx were all healed
-** 20241110 upgrade rescue
+*** 20241110 upgrade rescue
 ran
 #+begin_src bash
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
