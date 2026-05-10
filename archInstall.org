@@ -516,52 +516,142 @@ look for them with ~pacman -Q | grep~ and remove with their deps not required by
 (can also query for orphan/not-needed packages with ~pacman -Qdt~)
 ** troubleshooting / break glass
 these are rescue notes from real incidents, not a normal install checklist.
-*** chrooting into lvm system
-a good reference link: https://gist.github.com/uglide/5f6f23903dac6b5f2567 but essentially
+*** chrooting into lvm desktop system
+
+Use this from the Arch ISO when you need to repair the installed system without
+booting it (broken bootloader, recover from a botched =pacman -Syu=, edit user
+config files that prevent normal login, etc.). The mount paths below should
+always be verified against the installed system's =/etc/fstab=.
+
+Throughout, replace =<user>= with your installed-system username.
+
+**** Prerequisites: boot ISO, get wifi, optionally enable sshd
+Boot the Arch ISO USB to its root shell, then bring up wifi:
 #+begin_src bash
-vgscan # should show vg0 can also run pvscan
-vgchange -ay # activates vg0 now lvscan shows the familiar lv_root lv_home and any snapshots that had been made
+iwctl
+station list                          # find wifi interface (usually wlan0)
+station wlan0 get-networks
+station wlan0 connect YOUR_SSID       # or: iwctl --passphrase "PASS" station wlan0 connect SSID
+exit
+ping -c 2 archlinux.org               # confirm
 #+end_src
 
-mount the lvm setup (similar to how it was done in the setup instructions above)
+Optional but recommended — drive the chroot from another machine over ssh:
+#+begin_src bash
+passwd                                # set a temp root password on the ISO
+systemctl start sshd
+ip -br a                              # note the IPv4
+
+# For keyless ssh, append your other machine's public key (whichever you use:
+# id_ed25519.pub, id_rsa.pub, etc.) into /root/.ssh/authorized_keys
+mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+# ... paste the public key line into /root/.ssh/authorized_keys ...
+chmod 600 /root/.ssh/authorized_keys
+#+end_src
+
+Then from the other machine: =ssh-keygen -R <ISO_IP>= (clear any stale host key
+from a previous ISO boot) and =ssh -o StrictHostKeyChecking=accept-new root@<ISO_IP>=.
+
+**** Activate the LVM volume group
+#+begin_src bash
+vgscan                                # should list vg0
+vgchange -ay                          # activates lv_root, lv_home, any snapshots
+lvs                                   # confirm
+#+end_src
+
+**** Mount the partition / LVM stack
+
+Layout (confirm against this system's =/etc/fstab=):
+
+| Device           | FS   | Mount at                | fstab path  |
+|------------------+------+-------------------------+-------------|
+| /dev/nvme0n1p1   | vfat | =/mnt/boot/EFI=         | =/boot/EFI= |
+| /dev/nvme0n1p2   | ext4 | =/mnt/boot=             | =/boot=     |
+| /dev/vg0/lv_root | ext4 | =/mnt=                  | =/=         |
+| /dev/vg0/lv_home | ext4 | =/mnt/home=             | =/home=     |
+
+*Critical: the EFI partition mounts at =/boot/EFI= (UPPERCASE), not =/boot/efi=.*
+Match fstab exactly — otherwise =grub-install --efi-directory=/mnt/boot/EFI=
+writes to the wrong place and the installed system won't see your changes.
+
 #+begin_src bash
 mount /dev/vg0/lv_root /mnt
+mount /dev/nvme0n1p2   /mnt/boot
+mount /dev/nvme0n1p1   /mnt/boot/EFI     # UPPERCASE -- see fstab
+mount /dev/vg0/lv_home /mnt/home         # always mount; see note below
 
-mount /dev/nvme0n1p2 /mnt/boot
-mkdir /mnt/boot/efi || true
-mount /dev/nvme0n1p1 /mnt/boot/efi
-mount /dev/vg0/lv_home /mnt/home
+findmnt -R /mnt                          # verify
+ls /mnt/home/<user>/.bashrc              # if "No such file", lv_home isn't mounted right
+#+end_src
 
-mount --bind /dev /mnt/dev
-mount --bind /proc /mnt/proc
-mount --bind /sys /mnt/sys
+*Always mount lv_home.* Without it, =/mnt/home/<user>/= is the root LV's empty
+placeholder, not the user's actual home — any edits to files in there silently
+land in the placeholder and have *zero effect* on the booted system. Only skip
+if you're certain you won't touch =/home= (e.g., pure AUR build done in =/tmp=).
 
-mount -t efivarfs efivarfs /mnt/sys/firmware/efi/efivars # to use grub-install and such
-
-# before chroot you want to have wifi already so do these
-iwctl
-station wlan0 scan
-station wlan0 get-networks
-station wlan0 connect your_ssid
-exit # then confirm with a ping
-
-#chroot /mnt /bin/bash # otherwise zsh default but should use arch-chroot anyways
+**** chroot
+#+begin_src bash
 arch-chroot /mnt
 #+end_src
 
-at the end
+=arch-chroot= (from =arch-install-scripts=) automatically bind-mounts =/proc=,
+=/sys=, =/dev=, =/dev/pts=, =/run=, and =/sys/firmware/efi/efivars=. No manual
+=mount --bind= dance needed. If =efibootmgr= or =grub-install= later complain
+about EFI vars, =mount | grep efivars= and remount if missing:
+=mount -t efivarfs efivarfs /sys/firmware/efi/efivars=.
+
+**** Common operations inside the chroot
+- Edit user files (needs lv_home mounted): =/home/<user>/<file>=.
+- Recover a botched upgrade:
+  #+begin_src bash
+  rm /var/lib/pacman/db.lck             # if pacman complains "could not lock"
+  pacman -Syu                           # or --overwrite '*' if it complains about
+                                        # existing files from an interrupted upgrade
+  #+end_src
+- Regenerate initramfs (*needs /boot mounted*): ~mkinitcpio -P~
+- Rebuild GRUB (*needs /boot AND /boot/EFI mounted*):
+  #+begin_src bash
+  grub-mkconfig -o /boot/grub/grub.cfg
+  grub-install --target=x86_64-efi --efi-directory=/boot/EFI \
+               --bootloader-id=grub_uefi --recheck
+  efibootmgr -v                         # confirm the boot entry
+  #+end_src
+
+**** Clean exit and reboot
 #+begin_src bash
-exit
+exit                                  # leave the chroot shell
+cd /                                  # avoid "umount: target is busy"
+sync
 umount -R /mnt
-shutdown now
+reboot                                # or  shutdown now
 #+end_src
 
-in the case of an older setup like on the x220 with just sda1 partition, i still ran up to the first mount ~/dev/vg0/lv_root /mnt~ but then in the next block of commands i only did
-#+begin_src bash
-mount /dev/vg0/lv_home /mnt/home
-#+end_src
+Pull the USB during POST so the installed bootloader takes over on next boot.
 
-the rest is the same but i skipped the efivarfs bit as not a uefi setup (~ls /sys/firmware/efi~ was empty)
+**** Common pitfalls
+- *Not mounting =/mnt/boot= before =mkinitcpio -P= or a kernel upgrade.* New
+  =vmlinuz-*= / =initramfs-*= files land in the root LV's =/boot/= placeholder
+  (shadowed by the real boot partition once normally booted). Symptom: GRUB
+  error =file '/initramfs-linux-fallback.img' not found= on next boot.
+- *Not mounting =/mnt/boot/EFI= before =grub-install=.* New =grubx64.efi= ends
+  up under the root LV and the firmware never sees it.
+- *Lowercase =/efi= vs uppercase =/EFI=* — same shadow-vs-real problem. Always
+  match fstab.
+- *Missing the fallback entry in mkinitcpio presets.* If a preset under
+  =/etc/mkinitcpio.d/= only has =PRESETS=('default')=, no fallback initramfs is
+  generated, but GRUB's auto-generated config still references it. Fix:
+  #+begin_src bash
+  sed -i "s/PRESETS=('default')/PRESETS=('default' 'fallback')/" \
+      /etc/mkinitcpio.d/linux.preset    # adjust for whichever kernels you have
+  mkinitcpio -P
+  #+end_src
+- *Editing files in =/mnt/home/<user>/= without lv_home mounted* — silent no-op.
+
+**** Old x220 laptop (legacy BIOS, single sda root LV — historical note)
+BIOS boot, no separate /boot partition, no EFI partition; =/boot= lives inside
+the root LV. For that machine: =vgchange -ay=, mount lv_root + lv_home only
+(skip =/mnt/boot=, =/mnt/boot/EFI=, and the efivars mount), then =arch-chroot /mnt=.
 *** 20250506 upgrade rescue
 the commands below were emergency-only after confirming pacman was genuinely wedged mid-upgrade.
 on old x220 laptop, pacman Syu was mid-upgrading when laptop hung and had to power it off. Followed the chroot instructions to finish running pacman Syu but i had to first do
